@@ -2,8 +2,6 @@
 #include <iterator> // std::iterator_traits
 #include <typeinfo> // typeid
 
-#include "vector.hpp"
-
 int main()
 {
     // typedef std::iterator_traits<int *> traits;
