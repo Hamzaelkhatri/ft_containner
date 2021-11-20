@@ -15,7 +15,8 @@ namespace ft
           class Distance = ptrdiff_t,  // iterator::difference_type
           class Pointer = T*,          // iterator::pointer
           class Reference = T&         // iterator::reference
-          > class iterator
+          >
+    class iterator
     {
         public:
             typedef Category iterator_category;
@@ -67,7 +68,12 @@ namespace ft
             typedef typename iterator_traits<Iterator>::difference_type difference_type;
             typedef typename iterator_traits<Iterator>::pointer pointer;
             typedef typename iterator_traits<Iterator>::reference reference;
+            // constructor default
+            reverse_iterator() : current(0) {}
+            // constructor initialisation
             reverse_iterator(Iterator current) : current(current) {}
+            // constructor copy
+            reverse_iterator(const reverse_iterator& it) : current(it.current) {}
             Iterator base() const { return current; }
             //member operator
                     //Dereference iterator
