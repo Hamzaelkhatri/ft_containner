@@ -1,5 +1,6 @@
 #include <iostream>
 #include "vector.hpp"
+#include <vector>
 
 int main()
 {
@@ -12,5 +13,8 @@ int main()
     std::cout
         << "Size of foo: " << int(foo.size()) << '\n';
     std::cout << "Size of bar: " << int(bar.size()) << '\n';
+    // ft::vector<int>::iterator it = ft::vector<int>::iterator();
+    // std::vector<int>::iterator it2 = std::vector<int>::iterator();
+
     return 0;
 }

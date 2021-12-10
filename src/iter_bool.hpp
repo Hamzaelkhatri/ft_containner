@@ -165,6 +165,9 @@ namespace ft
     {
         typedef T1 first_type;
         typedef T2 second_type;
+
+        T1 first;
+        T2 second;
         pair();
         template <class U, class V>
         pair(const pair<U, V> &pr) : first_type(pr.first), second_type(pr.second)
@@ -176,8 +179,8 @@ namespace ft
         // implicit declaration of copy constructor
         pair &operator=(const pair &pr)
         {
-            first_type = pr.first_type;
-            second_type = pr.second_type;
+            first = pr.first;
+            second = pr.second;
             return *this;
         }
     };
