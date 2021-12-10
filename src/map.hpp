@@ -1,5 +1,4 @@
-//re-build a  map<T t, T t> containner like c++
-
+// re-build a  map<T t, T t> containner like c++
 
 #ifndef MAP_HPP
 #define MAP_HPP
@@ -24,9 +23,7 @@
 #include <climits>
 #include <cfloat>
 
-
-
 namespace ft
 {
-    
+
 }
