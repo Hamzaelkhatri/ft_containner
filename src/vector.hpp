@@ -106,6 +106,8 @@ namespace ft
             }
         }
 
+        // get_allocator
+        allocator_type get_allocator() const { return _alloc; }
         // max_size
         size_type max_size() const { return _alloc.max_size(); }
         // element access
@@ -250,14 +252,76 @@ namespace ft
             _size -= last - first;
             return first;
         };
-
         void swap(vector &v)
         {
             ft::swap(_data, v._data);
             ft::swap(_size, v._size);
             ft::swap(_capacity, v._capacity);
         };
-    };
-}
 
+        // flip
+        void flip()
+        {
+            for (size_type i = 0; i < _size; ++i)
+            {
+                _data[i] = !_data[i];
+            }
+        };
+    };
+    // relational operators
+    template <class T, class Alloc>
+    bool operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+    {
+        if (lhs.size() != rhs.size())
+            return false;
+        for (size_t i = 0; i < lhs.size(); ++i)
+            if (lhs[i] != rhs[i])
+                return false;
+        return true;
+    }
+    template <class T, class Alloc>
+    bool operator!=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+    {
+        return !(lhs == rhs);
+    }
+    template <class T, class Alloc>
+    bool operator<(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+    {
+        if (lhs.size() < rhs.size())
+            return true;
+        else if (lhs.size() > rhs.size())
+            return false;
+        for (size_t i = 0; i < lhs.size(); ++i)
+            if (lhs[i] < rhs[i])
+                return true;
+            else if (lhs[i] > rhs[i])
+                return false;
+        return false;
+    }
+    template <class T, class Alloc>
+    bool operator>(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+    {
+        return rhs < lhs;
+    }
+    template <class T, class Alloc>
+    bool operator<=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+    {
+        return !(lhs > rhs);
+    }
+    template <class T, class Alloc>
+    bool operator>=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+    {
+        return !(lhs < rhs);
+    }
+    // swap
+
+    template <class T, class Alloc>
+    void swap(vector<T, Alloc> &lhs, vector<T, Alloc> &rhs)
+    {
+        vector<T, Alloc> tmp(lhs);
+        lhs = rhs;
+        rhs = tmp;
+    }
+
+}
 #endif
