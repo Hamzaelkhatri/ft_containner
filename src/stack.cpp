@@ -1,44 +1,28 @@
-
-#include <stack>
 #include <iostream>
 #include "stack.hpp"
+#include <stack>
 
 int main()
 {
-    // Create a stack of ints
-    ft::stack<int> intStack;
-    std::stack<int> stdStack;
+    ft::stack<int> stack;
+    stack.push(1);
+    stack.push(2);
+    stack.push(3);
+    stack.push(4);
+    stack.push(5);
+    stack.push(6);
+    stack.push(7);
+    stack.push(8);
+    stack.push(9);
+    stack.push(10);
 
-    // Push some values onto the stack
-    intStack.push(1);
-    intStack.push(2);
-    intStack.push(3);
-    intStack.push(4);
-
-    // push some values onto the std::stack
-    stdStack.push(1);
-    stdStack.push(2);
-    stdStack.push(3);
-    stdStack.push(4);
-
-    // Print the values on the stack
-    std::cout << "intStack: ";
-    while (!intStack.empty())
+    std::cout << stack.top() << std::endl;
+    std::cout << stack.size() << std::endl;
+    std::cout << stack.empty() << std::endl;
+    stack.pop();
+    for (size_t i = 0; i < stack.size(); i++)
     {
-        std::cout << intStack.top() << " ";
-        intStack.pop();
+        std::cout << stack.top() << std::endl;
+        stack.pop();
     }
-
-    std::cout << std::endl;
-
-    // Print the values on the std::stack
-    std::cout << "stdStack: ";
-    while (!stdStack.empty())
-    {
-        std::cout << stdStack.top() << " ";
-        stdStack.pop();
-    }
-    std::cout << std::endl;
-
-    return 0;
 }
