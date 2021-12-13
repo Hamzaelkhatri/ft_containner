@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <map>
 
 // COLOR ENUM
 enum Color
@@ -14,9 +15,12 @@ struct Node
     int key;
     Node *left, *right;
     int color;
-    Node(int key)
+    std::string value;
+    // constructor
+    Node(int k, std::string v)
     {
-        this->key = key;
+        key = k;
+        value = v;
         left = right = NULL;
         color = RED;
     }
@@ -46,20 +50,20 @@ Node *LeftRotate(Node *x)
 }
 
 // insert a node in the tree
-void InsertNewNode(Node *&root, int key)
+void InsertNewNode(Node *&root, int key, std::string value)
 {
     if (root == NULL)
     {
-        root = new Node(key);
+        root = new Node(key, value);
         return;
     }
     if (key < root->key)
-        InsertNewNode(root->left, key);
+        InsertNewNode(root->left, key, value);
     else if (key > root->key)
-        InsertNewNode(root->right, key);
+        InsertNewNode(root->right, key, value);
     else
         return;
-    // fix the tree
+    // fix the tree after insertion of new node
     if (root->left != NULL && root->left->color == RED && root->right != NULL && root->right->color == RED)
     {
         root->color = RED;
@@ -87,11 +91,15 @@ void PrintTree(Node *root) // print three with designated format
     if (root == NULL)
         return;
     PrintTree(root->left);
-    std::cout << root->key << " ";
+    if (root->color == RED)
+        std::cout << "RED ";
+    else
+        std::cout << "BLACK ";
+    std::cout << root->key << " -->  " << root->value << " " << std::endl;
     PrintTree(root->right);
 }
 
-void  DeleteNode(Node *&root, int key)
+void DeleteNode(Node *&root, int key)
 {
     if (root == NULL)
         return;
@@ -155,27 +163,83 @@ int main()
 
     // test Tree
     Node *root = NULL;
-    InsertNewNode(root, 30);
-    InsertNewNode(root, 40);
-    InsertNewNode(root, 10);
-    InsertNewNode(root, 20);
+    // int i = 0;
+    // while (i < 1000)
+    // {
+    //     InsertNewNode(root, i, "test");
+    //     i++;
+    // }
 
-    // print the tree
-    std::cout << "The tree is: " << std::endl;
-    PrintTree(root);
+    // InsertNewNode(root, 30, "30");
 
-    // delete a node
-    DeleteNode(root, 10);
+    // // print the tree
+    // std::cout << "The tree is after insert: " << std::endl;
+    // PrintTree(root);
 
-    // print the tree
-    std::cout << "The tree is: " << std::endl;
-    PrintTree(root);
+    // // delete a node
+    // DeleteNode(root, 10);
 
+    // // print the tree
+    // std::cout << "The tree after delete is: " << std::endl;
+    // PrintTree(root);
+
+    // // search a node
+    // Node *temp = SearchNode(root, 120);
+    // if (temp != NULL)
+    //     std::cout << "\nThe node is found: " << temp->key << std::endl;
+    // else
+    //     std::cout << "\nThe node is not found" << std::endl;
+
+    // compare beteen map and red-black tree
+    std::map<int, std::string> map;
+    // map[10] = "10";
+    // map[20] = "20";
+    // map[30] = "30";
+    // map[40] = "40";
+
+    // std::cout << "The map is: " << std::endl;
+    // // iterate through the map
+    // for (std::map<int, std::string>::iterator it = map.begin(); it != map.end(); ++it)
+    //     std::cout << it->first << " --> " << it->second << std::endl;
+
+    // calculate the time
+    clock_t start, end;
+    double cpu_time_used;
+    start = clock();
+    // insert a node
+    int i = 0;
+    while (i < 10000)
+    {
+        InsertNewNode(root, i, "test");
+        i++;
+    }
+    end = clock();
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    std::cout << "The time for insert is: " << cpu_time_used << std::endl;
+
+    // calculate the time for search
+    start = clock();
     // search a node
-    Node *temp = SearchNode(root, 120);
-    if (temp != NULL)
-        std::cout << "\nThe node is found: " << temp->key << std::endl;
-    else
-        std::cout << "\nThe node is not found" << std::endl;
+    i = 0;
+    while (i < 10000)
+    {
+        SearchNode(root, i);
+        i++;
+    }
+    end = clock();
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    std::cout << "The time for search is: " << cpu_time_used << std::endl;
+
+    // calculate the time for map
+    // iterate through the insert map
+    start = clock();
+    while (i < 10000)
+    {
+        map[i] = "test";
+        i++;
+    }
+    end = clock();
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    std::cout << "The time for map is: " << cpu_time_used << std::endl;
     return 0;
 }

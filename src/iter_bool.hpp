@@ -168,7 +168,11 @@ namespace ft
 
         T1 first;
         T2 second;
-        pair();
+        pair()
+            : first(), second()
+        {
+        }
+
         template <class U, class V>
         pair(const pair<U, V> &pr) : first_type(pr.first), second_type(pr.second)
         {
