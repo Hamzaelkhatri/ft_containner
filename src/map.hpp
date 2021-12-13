@@ -3,28 +3,34 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <iterator>
-#include <functional>
-#include <cctype>
-#include <locale>
-#include <sstream>
-#include <fstream>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <cmath>
-#include <ctime>
-#include <cassert>
-#include <climits>
-#include <cfloat>
-#include "map.hpp"
+#include "iterators.hpp"
+#include "iter_bool.hpp"
+
+enum Color
+{
+    RED,
+    BLACK
+};
+// structs for RED-BLACK tree
+struct Node
+{
+    int key;
+    Node *left, *right;
+    int color;
+    std::string value;
+    // constructor
+    Node(int k, std::string v)
+    {
+        key = k;
+        value = v;
+        left = right = NULL;
+        color = RED;
+    }
+};
 
 namespace ft
 {
+
     template <class Key,                                             // map::key_type
               class T,                                               // map::mapped_type
               class Compare = std::less<Key>,                        // map::key_compare
@@ -34,12 +40,37 @@ namespace ft
     {
         // member types
     private:
-        // parametre of constructor
+        // create   comp_,alloc_ c++98
+        Compare comp_;
+        Alloc alloc_;
+        // create   root_ c++98
+        Node *root_;
+        // create   size_ c++98
+        size_t size_;
+
+        void clear()
+        {
+            if (root_ == NULL)
+                return;
+            clear(root_->left);
+            clear(root_->right);
+            delete root_;
+            root_ = NULL;
+        }
+
+        // begin
+        Node *begin()
+        {
+            Node *tmp = root_;
+            while (tmp->left != NULL)
+                tmp = tmp->left;
+            return tmp;
+        }
 
     public:
         typedef Key key_type;
         typedef T mapped_type;
-        typedef std::pair<const Key, T> value_type;
+        typedef pair<const Key, T> value_type;
         typedef Compare key_compare;
         typedef Alloc allocator_type;
         typedef typename allocator_type::reference reference;
@@ -50,8 +81,8 @@ namespace ft
         typedef typename allocator_type::difference_type difference_type;
         typedef typename allocator_type::iterator iterator;
         typedef typename allocator_type::const_iterator const_iterator;
-        typedef std::reverse_iterator<iterator> reverse_iterator;
-        typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+        typedef reverse_iterator<iterator> reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
         // member functions
         explicit map(const key_compare &comp = key_compare(),
                      const allocator_type &alloc = allocator_type())
@@ -71,6 +102,17 @@ namespace ft
             : comp_(comp), alloc_(alloc)
         {
             copy(first, last, begin());
+        }
+
+        map &operator=(const map &x)
+        {
+            if (this != &x)
+            {
+                // clear the tree
+                clear();
+                copy(x.begin(), x.end(), begin());
+            }
+            return *this;
         }
     };
 }

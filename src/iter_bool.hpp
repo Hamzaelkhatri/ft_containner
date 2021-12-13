@@ -1,7 +1,7 @@
 #ifndef ITER_BOOL_HPP
 #define ITER_BOOL_HPP
 #include <iostream>
-
+#include "iterators.hpp"
 namespace ft
 {
     // create my own std::enable_if cpp98
@@ -201,6 +201,25 @@ namespace ft
         T tmp = a;
         a = b;
         b = tmp;
+    }
+    // create my own std::copy
+    template <class InputIt, class OutputIt>
+    OutputIt copy(InputIt first, InputIt last, OutputIt d_first)
+    {
+        for (; first != last; ++first, ++d_first)
+        {
+            *d_first = *first;
+        }
+        return d_first;
+    }
+    // create my own std::clear
+    template <class ForwardIt>
+    void clear(ForwardIt first, ForwardIt last)
+    {
+        for (; first != last; ++first)
+        {
+            *first = typename ft::iterator_traits<ForwardIt>::value_type();
+        }
     }
 }
 #endif

@@ -2,31 +2,19 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include "map.hpp"
 
+// clear tree
+void clear(Node *&root)
+{
+    if (root == NULL)
+        return;
+    clear(root->left);
+    clear(root->right);
+    delete root;
+    root = NULL;
+}
 // COLOR ENUM
-enum Color
-{
-    RED,
-    BLACK
-};
-// structs for RED-BLACK tree
-struct Node
-{
-    int key;
-    Node *left, *right;
-    int color;
-    std::string value;
-    // constructor
-    Node(int k, std::string v)
-    {
-        key = k;
-        value = v;
-        left = right = NULL;
-        color = RED;
-    }
-};
-
-// RIGHTROTATION
 Node *RightRotate(Node *y)
 {
     Node *x = y->left;
@@ -203,43 +191,43 @@ int main()
     //     std::cout << it->first << " --> " << it->second << std::endl;
 
     // calculate the time
-    clock_t start, end;
-    double cpu_time_used;
-    start = clock();
-    // insert a node
-    int i = 0;
-    while (i < 10000)
-    {
-        InsertNewNode(root, i, "test");
-        i++;
-    }
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    std::cout << "The time for insert is: " << cpu_time_used << std::endl;
+    // clock_t start, end;
+    // double cpu_time_used;
+    // start = clock();
+    // // insert a node
+    // int i = 0;
+    // while (i < 10000)
+    // {
+    //     InsertNewNode(root, i, "test");
+    //     i++;
+    // }
+    // end = clock();
+    // cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    // std::cout << "The time for insert is: " << cpu_time_used << std::endl;
 
-    // calculate the time for search
-    start = clock();
-    // search a node
-    i = 0;
-    while (i < 10000)
-    {
-        SearchNode(root, i);
-        i++;
-    }
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    std::cout << "The time for search is: " << cpu_time_used << std::endl;
+    // // calculate the time for search
+    // start = clock();
+    // // search a node
+    // i = 0;
+    // while (i < 10000)
+    // {
+    //     SearchNode(root, i);
+    //     i++;
+    // }
+    // end = clock();
+    // cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    // std::cout << "The time for search is: " << cpu_time_used << std::endl;
 
-    // calculate the time for map
-    // iterate through the insert map
-    start = clock();
-    while (i < 10000)
-    {
-        map[i] = "test";
-        i++;
-    }
-    end = clock();
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    std::cout << "The time for map is: " << cpu_time_used << std::endl;
+    // // calculate the time for map
+    // // iterate through the insert map
+    // start = clock();
+    // while (i < 10000)
+    // {
+    //     map[i] = "test";
+    //     i++;
+    // }
+    // end = clock();
+    // cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    // std::cout << "The time for map is: " << cpu_time_used << std::endl;
     return 0;
 }
