@@ -91,6 +91,56 @@ void PrintTree(Node *root) // print three with designated format
     PrintTree(root->right);
 }
 
+void  DeleteNode(Node *&root, int key)
+{
+    if (root == NULL)
+        return;
+    if (key < root->key)
+        DeleteNode(root->left, key);
+    else if (key > root->key)
+        DeleteNode(root->right, key);
+    else
+    {
+        if (root->left == NULL && root->right == NULL)
+        {
+            delete root;
+            root = NULL;
+        }
+        else if (root->left == NULL)
+        {
+            Node *temp = root;
+            root = root->right;
+            delete temp;
+        }
+        else if (root->right == NULL)
+        {
+            Node *temp = root;
+            root = root->left;
+            delete temp;
+        }
+        else
+        {
+            Node *temp = root->right;
+            while (temp->left != NULL)
+                temp = temp->left;
+            root->key = temp->key;
+            DeleteNode(root->right, temp->key);
+        }
+    }
+}
+
+Node *SearchNode(Node *root, int key)
+{
+    if (root == NULL)
+        return NULL;
+    if (key < root->key)
+        return SearchNode(root->left, key);
+    else if (key > root->key)
+        return SearchNode(root->right, key);
+    else
+        return root;
+}
+
 int main()
 {
     // RED BLACK TREE ALGORITHM
@@ -114,5 +164,18 @@ int main()
     std::cout << "The tree is: " << std::endl;
     PrintTree(root);
 
+    // delete a node
+    DeleteNode(root, 10);
+
+    // print the tree
+    std::cout << "The tree is: " << std::endl;
+    PrintTree(root);
+
+    // search a node
+    Node *temp = SearchNode(root, 120);
+    if (temp != NULL)
+        std::cout << "\nThe node is found: " << temp->key << std::endl;
+    else
+        std::cout << "\nThe node is not found" << std::endl;
     return 0;
 }
