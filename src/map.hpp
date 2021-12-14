@@ -67,6 +67,31 @@ namespace ft
             return tmp;
         }
 
+        ft::pair<iterator, bool> insert_unique(const value_type &x)
+        {
+            Node *tmp = root_;
+            Node *parent = NULL;
+            while (tmp != NULL)
+            {
+                parent = tmp;
+                if (comp_(x.first, tmp->key))
+                    tmp = tmp->left;
+                else if (comp_(tmp->key, x.first))
+                    tmp = tmp->right;
+                else
+                    return ft::pair<iterator, bool>(iterator(tmp), false);
+            }
+            tmp = new Node(x.first, x.second);
+            if (parent == NULL)
+                root_ = tmp;
+            else if (comp_(x.first, parent->key))
+                parent->left = tmp;
+            else
+                parent->right = tmp;
+            ++size_;
+            return ft::pair<iterator, bool>(iterator(tmp), true);
+        }
+
     public:
         typedef Key key_type;
         typedef T mapped_type;
@@ -104,6 +129,12 @@ namespace ft
             copy(first, last, begin());
         }
 
+        // destructor
+        ~map()
+        {
+            clear();
+        }
+
         map &operator=(const map &x)
         {
             if (this != &x)
@@ -113,6 +144,166 @@ namespace ft
                 copy(x.begin(), x.end(), begin());
             }
             return *this;
+        }
+
+        // Iterators:
+        iterator begin()
+        {
+            return iterator(begin(root_));
+        }
+
+        const_iterator begin() const
+        {
+            return const_iterator(begin(root_));
+        }
+
+        iterator end()
+        {
+            return iterator(NULL);
+        }
+
+        const_iterator end() const
+        {
+            return const_iterator(NULL);
+        }
+
+        reverse_iterator rbegin()
+        {
+            return reverse_iterator(end());
+        }
+
+        const_reverse_iterator rbegin() const
+        {
+            return const_reverse_iterator(end());
+        }
+
+        reverse_iterator rend()
+        {
+            return reverse_iterator(begin());
+        }
+
+        // Capacity :
+        bool empty() const
+        {
+            return size_ == 0;
+        }
+
+        size_type size() const
+        {
+            return size_;
+        }
+
+        // max_size()
+        size_type max_size() const
+        {
+            return size_type(-1);
+        }
+
+        // Element access:
+        mapped_type &operator[](const key_type &k)
+        {
+            return insert(value_type(k, mapped_type())).first->second;
+        }
+
+        // insert
+        ft::pair<ft::iterator, bool> insert(const value_type &x)
+        {
+            return insert_unique(x);
+        }
+
+        template <class InputIterator>
+        void insert(InputIterator first, InputIterator last)
+        {
+            for (; first != last; ++first)
+                insert(*first);
+        }
+
+        iterator insert(iterator position, const value_type &val)
+        {
+            return insert_unique(position, val);
+        }
+
+        // insert_unique
+
+        // erase
+        size_type erase(const key_type &k)
+        {
+            return erase_unique(k);
+        }
+
+        void erase(iterator position)
+        {
+            erase_unique(position.node_);
+        }
+
+        void erase(iterator first, iterator last)
+        {
+            for (; first != last; ++first)
+                erase_unique(first.node_);
+        }
+
+        void swap(map &x)
+        {
+            ft::swap(root_, x.root_);
+            ft::swap(size_, x.size_);
+            ft::swap(comp_, x.comp_);
+            ft::swap(alloc_, x.alloc_);
+        }
+
+        // find
+        iterator find(const key_type &k)
+        {
+            return iterator(find_unique(k));
+        }
+
+        const_iterator find(const key_type &k) const
+        {
+            return const_iterator(find_unique(k));
+        }
+
+        // count
+        size_type count(const key_type &k) const
+        {
+            return find_unique(k) == NULL ? 0 : 1;
+        }
+
+        // lower_bound
+        iterator lower_bound(const key_type &k)
+        {
+            return iterator(lower_bound_unique(k));
+        }
+
+        const_iterator lower_bound(const key_type &k) const
+        {
+            return const_iterator(lower_bound_unique(k));
+        }
+
+        // upper_bound
+        iterator upper_bound(const key_type &k)
+        {
+            return iterator(upper_bound_unique(k));
+        }
+
+        const_iterator upper_bound(const key_type &k) const
+        {
+            return const_iterator(upper_bound_unique(k));
+        }
+
+        // equal_range
+        ft::pair<iterator, iterator> equal_range(const key_type &k)
+        {
+            return ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
+        }
+
+        ft::pair<const_iterator, const_iterator> equal_range(const key_type &k) const
+        {
+            return ft::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k));
+        }
+
+        // get_allocator
+        allocator_type get_allocator() const
+        {
+            return alloc_;
         }
     };
 }

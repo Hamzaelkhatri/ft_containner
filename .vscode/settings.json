@@ -65,6 +65,8 @@
         "memory_resource": "cpp",
         "__functional_03": "cpp",
         "deque": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "bit": "cpp",
+        "iomanip": "cpp"
     }
 }
