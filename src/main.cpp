@@ -1,20 +1,20 @@
-#include <iostream>
-#include "vector.hpp"
-#include <vector>
+#include "RBT.hpp"
 
 int main()
 {
-    ft::vector<int> foo(3, 0);
-    ft::vector<int> bar(5, 0);
 
-    bar = foo;
-    foo = ft::vector<int>();
+    // add values to the tree
+    ft::RBT<int, std::less<int> > tree;
+    tree.insert(1);
+    tree.insert(2);
+    tree.insert(3);
+    tree.insert(4);
+    tree.insert(5);
 
-    std::cout
-        << "Size of foo: " << int(foo.size()) << '\n';
-    std::cout << "Size of bar: " << int(bar.size()) << '\n';
-    // ft::vector<int>::iterator it = ft::vector<int>::iterator();
-    // std::vector<int>::iterator it2 = std::vector<int>::iterator();
-
+    // print the tree
+    tree.printTree();
+    // tree.insert(2);
+    // tree.insert(3);
+    // tree.insert(4);
     return 0;
 }

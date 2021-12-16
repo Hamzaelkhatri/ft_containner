@@ -59,37 +59,12 @@ namespace ft
         }
 
         // begin
-        Node *begin()
+        Node *Nodebegin()
         {
             Node *tmp = root_;
             while (tmp->left != NULL)
                 tmp = tmp->left;
             return tmp;
-        }
-
-        ft::pair<iterator, bool> insert_unique(const value_type &x)
-        {
-            Node *tmp = root_;
-            Node *parent = NULL;
-            while (tmp != NULL)
-            {
-                parent = tmp;
-                if (comp_(x.first, tmp->key))
-                    tmp = tmp->left;
-                else if (comp_(tmp->key, x.first))
-                    tmp = tmp->right;
-                else
-                    return ft::pair<iterator, bool>(iterator(tmp), false);
-            }
-            tmp = new Node(x.first, x.second);
-            if (parent == NULL)
-                root_ = tmp;
-            else if (comp_(x.first, parent->key))
-                parent->left = tmp;
-            else
-                parent->right = tmp;
-            ++size_;
-            return ft::pair<iterator, bool>(iterator(tmp), true);
         }
 
     public:
@@ -117,7 +92,7 @@ namespace ft
         map(const map &x)
             : comp_(x.comp_), alloc_(x.alloc_)
         {
-            copy(x.begin(), x.end(), begin());
+            copy(x.begin(), x.end(), Nodebegin());
         }
 
         template <class InputIterator>
@@ -126,7 +101,7 @@ namespace ft
             const allocator_type &alloc = allocator_type())
             : comp_(comp), alloc_(alloc)
         {
-            copy(first, last, begin());
+            copy(first, last, Nodebegin());
         }
 
         // destructor
@@ -206,10 +181,10 @@ namespace ft
         }
 
         // insert
-        ft::pair<ft::iterator, bool> insert(const value_type &x)
-        {
-            return insert_unique(x);
-        }
+        // ft::pair<ft::iterator, bool> insert(const value_type &x)
+        // {
+        //     return insert_unique(x);
+        // }
 
         template <class InputIterator>
         void insert(InputIterator first, InputIterator last)

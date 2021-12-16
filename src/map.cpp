@@ -4,6 +4,28 @@
 #include <map>
 #include "map.hpp"
 
+enum Color
+{
+    RED,
+    BLACK
+};
+// structs for RED-BLACK tree
+struct Node
+{
+    int key;
+    Node *left, *right;
+    int color;
+    std::string value;
+    // constructor
+    Node(int k, std::string v)
+    {
+        key = k;
+        value = v;
+        left = right = NULL;
+        color = RED;
+    }
+};
+
 // clear tree
 void clear(Node *&root)
 {
