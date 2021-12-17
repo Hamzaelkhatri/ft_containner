@@ -229,9 +229,17 @@ namespace ft
             printTree(n->left);
             // print node with key and color and height and if right or left is empty and if root 
             std::cout << "Key: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "ROOT" : "CHILD") << " Left: " << n->left << " Right: " << n->right << std::endl;
-            printTree(n->right);
+            printTree(n->right);            
         }
 
+        int isRBProper(_Node *n)
+        {
+            if (n == NULL)
+                return 1;
+            if (n->color == RED && ((n->left != NULL && n->left->color == RED )|| (n->right != NULL && n->right->color == RED)))
+                return 0;
+            return isRBProper(n->left) && isRBProper(n->right);
+        }
         //  INSERTION using heigh balanced tree
 
     public:
@@ -268,9 +276,20 @@ namespace ft
             printTree(root);
         }
 
-        ~RBT()
+        void makeEmpty()
         {
             makeEmpty(root);
+        }
+
+        //check if tree has a RED BLACK PROPERTY
+        bool isRBProper()
+        {
+            return isRBProper(root);
+        }
+
+        ~RBT()
+        {
+            makeEmpty();
         }
     };
 };
