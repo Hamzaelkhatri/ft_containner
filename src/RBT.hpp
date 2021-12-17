@@ -227,7 +227,6 @@ namespace ft
             if (n == NULL)
                 return;
             printTree(n->left);
-            // print node with key and color and height and if right or left is empty and if root 
             std::cout << "Key: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "ROOT" : "CHILD") << " Left: " << n->left << " Right: " << n->right << std::endl;
             printTree(n->right);            
         }
@@ -240,7 +239,136 @@ namespace ft
                 return 0;
             return isRBProper(n->left) && isRBProper(n->right);
         }
-        //  INSERTION using heigh balanced tree
+        //  deleteFixup
+        void deleteFixup(_Node *n)
+        {
+
+            while (n && n != root && n->color == BLACK)
+            {
+                if (n == n->parent->left)
+                {
+                    _Node *w = n->parent->right;
+                    if (w->color == RED)
+                    {
+                        w->color = BLACK;
+                        n->parent->color = RED;
+                        rotateLeft(n->parent);
+                        w = n->parent->right;
+                    }
+                    if (w->left->color == BLACK && w->right->color == BLACK)
+                    {
+                        w->color = RED;
+                        n = n->parent;
+                    }
+                    else
+                    {
+                        if (w->right->color == BLACK)
+                        {
+                            w->left->color = BLACK;
+                            w->color = RED;
+                            rotateRight(w);
+                            w = n->parent->right;
+                        }
+                        w->color = n->parent->color;
+                        n->parent->color = BLACK;
+                        w->right->color = BLACK;
+                        rotateLeft(n->parent);
+                        n = root;
+                    }
+                }
+                else
+                {
+                    _Node *w = n->parent->left;
+                    if (w && w->color == RED)
+                    {
+                        w->color = BLACK;
+                        n->parent->color = RED;
+                        rotateRight(n->parent);
+                        w = n->parent->left;
+                    }
+                    if (w->right->color == BLACK && w->left->color == BLACK)
+                    {
+                        w->color = RED;
+                        n = n->parent;
+                    }
+                    else
+                    {
+                        if (w->left->color == BLACK)
+                        {
+                            w->right->color = BLACK;
+                            w->color = RED;
+                            rotateLeft(w);
+                            w = n->parent->left;
+                        }
+                        w->color = n->parent->color;
+                        n->parent->color = BLACK;
+                        w->left->color = BLACK;
+                        rotateRight(n->parent);
+                        n = root;
+                    }
+                }
+            }
+        }
+
+        //transplant
+        void transplant(_Node *u, _Node *v)
+        {
+            if (u->parent == NULL)
+                root = v;
+            else if (u == u->parent->left)
+                u->parent->left = v;
+            else
+                u->parent->right = v;
+            if (v != NULL)
+                v->parent = u->parent;
+        }
+        //treeMinimum 
+        _Node *treeMinimum(_Node *n)
+        {
+            while (n->left != NULL)
+                n = n->left;
+            return n;
+        }
+        
+        // delete
+        void deleteNode(_Node *n)
+        {
+            _Node *x = NULL;
+            _Node *y = n;
+            _Node *z = NULL;
+            bool y_original_color = y->color;
+            if (n->left == NULL)
+            {
+                x = n->right;
+                transplant(n, n->right);
+            }
+            else if (n->right == NULL)
+            {
+                x = n->left;
+                transplant(n, n->left);
+            }
+            else
+            {
+                y = treeMinimum(n->right);
+                y_original_color = y->color;
+                x = y->right;
+                if (y->parent == n)
+                    x->parent = y;
+                else
+                {
+                    transplant(y, y->right);
+                    y->right = n->right;
+                    y->right->parent = y;
+                }
+                transplant(n, y);
+                y->left = n->left;
+                y->left->parent = y;
+                y->color = n->color;
+            }
+            if (y_original_color == BLACK)
+                deleteFixup(x);
+        }
+
 
     public:
         // Constructors and destructor
@@ -285,6 +413,39 @@ namespace ft
         bool isRBProper()
         {
             return isRBProper(root);
+        }
+
+        //search
+        _Node *search(T key)
+        {
+            _Node *n = root;
+            while (n != NULL)
+            {
+                if (n->key == key)
+                    return n;
+                else if (n->key > key)
+                    n = n->left;
+                else
+                    n = n->right;
+            }
+            return NULL;
+        }
+
+        // end()
+        _Node *end()
+        {
+            _Node *n = root;
+            while (n->right != NULL)
+                n = n->right;
+            return n;
+        }
+
+        // delete node
+        void deleteNode(T key)
+        {
+            _Node *n = search(key);
+            if (n != NULL)
+                deleteNode(n);
         }
 
         ~RBT()

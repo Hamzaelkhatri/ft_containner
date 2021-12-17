@@ -26,9 +26,11 @@ int main()
 
     // print the tree
     tree.printTree();
-    std::cout << (tree.isRBProper()? "\033[0;32mGOOD RBT":  "\033[0;31mNOT GOOD RDT") << std::endl;
-    // tree.insert(2);
-    // tree.insert(3);
-    // tree.insert(4);
+    std::cout << (tree.isRBProper()? "\033[0;32mGOOD RBT":  "\033[0;31mNOT GOOD RDT") << RESET << std::endl;
+    tree.deleteNode("a");
+    std::cout << "after delete (a) \n" << (tree.isRBProper()? "\033[0;32mGOOD RBT":  "\033[0;31mNOT GOOD RDT")<< RESET << std::endl;
+    tree.deleteNode("b");
+    std::cout << "after delete (b) \n" << (tree.isRBProper()? "\033[0;32mGOOD RBT":  "\033[0;31mNOT GOOD RDT")<< RESET << std::endl;
+    std::cout << tree.end() << std::endl;
     return 0;
 }
