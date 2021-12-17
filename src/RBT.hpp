@@ -24,7 +24,7 @@
 namespace ft
 {
 
-    template <class T, typename Comparable = std::less<T> >
+    template <class T, typename Comparable = std::less<T>>
     class RBT
     {
     private:
@@ -40,12 +40,12 @@ namespace ft
         {
             T key;
             Comparable value;
-            Node *left = nullptr; // Left child
-            Node *right = nullptr; // Right child
+            Node *left = nullptr;   // Left child
+            Node *right = nullptr;  // Right child
             Node *parent = nullptr; // Parent
-            Node *end = nullptr; // End of subtree
-            int height = 0; // Height
-            int color = RED; // 
+            Node *end = nullptr;    // End of subtree
+            int height = 0;         // Height
+            int color = RED;        //
             // set leftOfend
             void setLeftOfEnd(Node *node)
             {
@@ -74,7 +74,6 @@ namespace ft
             }
             Node(T k)
             {
-                // add end of tree in the 
                 key = k;
                 left = right = NULL;
                 color = RED;
@@ -110,6 +109,7 @@ namespace ft
             else
                 return g->left;
         }
+
         // update height of a node
         void updateHeight(_Node *n)
         {
@@ -181,6 +181,7 @@ namespace ft
         {
             return root;
         }
+
         // insertFixup
         void insertFixup(_Node *n)
         {
@@ -210,9 +211,9 @@ namespace ft
                 }
                 else
                 {
-                    _Node *u = n->parent->parent->left;// uncle
+                    _Node *u = n->parent->parent->left; // uncle
                     // check if Node is not empty
-                    if ( u && u->color == RED)// if u is NULL that mean uncle/aunt is NULL and any NULL mean Thats BLACK
+                    if (u && u->color == RED) // if u is NULL that mean uncle/aunt is NULL and any NULL mean Thats BLACK
                     {
                         n->parent->color = BLACK;
                         u->color = BLACK;
@@ -245,7 +246,7 @@ namespace ft
             while (x != NULL)
             {
                 y = x;
-                if (comp(n->key, x->key))
+                if (n->key < x->key)
                     x = x->left;
                 else
                     x = x->right;
@@ -255,7 +256,7 @@ namespace ft
             {
                 root = n;
             }
-            else if (comp(n->key, y->key))
+            else if (n->key < y->key)
                 y->left = n;
             else
                 y->right = n;
@@ -271,18 +272,18 @@ namespace ft
             if (n == NULL)
                 return;
             printTree(n->left);
-            std::cout << "Key: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "ROOT" : "CHILD") << " Left: " << n->left << " Right: " << n->right << std::endl;
-            printTree(n->right);            
+            std::cout << "Key: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "\033[0;31mROOT " : "CHILD ") << "\033[0mLeft: " << n->left << " Right: " << n->right << std::endl;
+            printTree(n->right);
         }
 
         int isRBProper(_Node *n)
         {
             if (n == NULL)
                 return 1;
-            if (n->color == RED && ((n->left != NULL && n->left->color == RED )|| (n->right != NULL && n->right->color == RED)))
+            if (n->color == RED && ((n->left != NULL && n->left->color == RED) || (n->right != NULL && n->right->color == RED)))
             {
                 //print details
-                std::cout << "Node: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "ROOT" : "CHILD") << " Left: " << n->left << " Right: " << n->right << std::endl;
+                std::cout << "Node: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == n->end ? "\033[0;31mROOT\033[0m" : "CHILD ") << " Left: " << n->left << " Right: " << n->right << std::endl;
                 return 0;
             }
             return isRBProper(n->left) && isRBProper(n->right);
@@ -305,14 +306,14 @@ namespace ft
             if (v != NULL)
                 v->parent = u->parent;
         }
-        //treeMinimum 
+        //treeMinimum
         _Node *treeMinimum(_Node *n)
         {
             while (n->left != NULL)
                 n = n->left;
             return n;
         }
-        
+
         // delete
         void deleteNode(_Node *n)
         {
@@ -353,7 +354,6 @@ namespace ft
             delete y;
         }
 
-
     public:
         // Constructors and destructor
         RBT()
@@ -376,16 +376,32 @@ namespace ft
             n->value = value;
             insert(n);
         }
-
         void insert(T key)
         {
             _Node *n = new _Node(key);
             insert(n);
         }
 
+        // insert using pair with enable if you want to use pair
+        void insert(std::pair<T, Comparable> pair)
+        {
+            // rebind the pair to the node
+            _Node *n = new _Node(pair.first);
+            n->value = pair.second;
+            insert(n);
+        }
+        // void insert(std::pair<T, Comparable> p)
+        // {
+        //     insert(p.first, p.second);
+        // }
         void printTree()
         {
             printTree(root);
+        }
+
+        void addPair(std::pair<int, int> key)
+        {
+            insert(key.first, key.second);
         }
 
         void makeEmpty()
