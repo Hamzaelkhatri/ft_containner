@@ -15,13 +15,13 @@ int main()
 
     // add values to the tree
     ft::RBT<std::string, std::less<std::string> > tree;
+    tree.insert("e");
+    tree.insert("d");
+    tree.insert("g");
     tree.insert("a");
     tree.insert("b");
     tree.insert("c");
-    tree.insert("d");
-    tree.insert("e");
     tree.insert("f");
-    tree.insert("g");
     tree.insert("h");
 
     // print the tree
@@ -31,6 +31,17 @@ int main()
     std::cout << "after delete (a) \n" << (tree.isRBProper()? "\033[0;32mGOOD RBT":  "\033[0;31mNOT GOOD RDT")<< RESET << std::endl;
     tree.deleteNode("b");
     std::cout << "after delete (b) \n" << (tree.isRBProper()? "\033[0;32mGOOD RBT":  "\033[0;31mNOT GOOD RDT")<< RESET << std::endl;
-    std::cout << tree.end() << std::endl;
+    // std::cout << tree.end() << std::endl;
+    //add a lot of values
+    for (int i = 0; i < 100; i++)
+    {
+        tree.insert(std::to_string(i));
+    }
+    std::cout << "after insert 100 values \n" << (tree.isRBProper()? "\033[0;32mGOOD RBT":  "\033[0;31mNOT GOOD RDT")<< RESET << std::endl;
+    tree.deleteNode("99");
+    std::cout << "after delete (99) \n" << (tree.isRBProper()? "\033[0;32mGOOD RBT":  "\033[0;31mNOT GOOD RDT")<< RESET << std::endl;
+    tree.deleteNode("98");
+    // tree.insert("98");
+    std::cout << "after delete (98) \n" << (tree.isRBProper()? "\033[0;32mGOOD RBT":  "\033[0;31mNOT GOOD RDT")<< RESET << std::endl;
     return 0;
 }

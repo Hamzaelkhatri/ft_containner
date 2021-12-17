@@ -145,12 +145,12 @@ namespace ft
         // insertFixup
         void insertFixup(_Node *n)
         {
-            while (n != root && n->parent->color == RED)
+            while (n && n != root && n->parent->color == RED)
             {
                 if (n->parent == n->parent->parent->left)
                 {
                     _Node *u = n->parent->parent->right;
-                    if (u->color == RED)
+                    if (u && u->color == RED)
                     {
                         n->parent->color = BLACK;
                         u->color = BLACK;
@@ -236,78 +236,17 @@ namespace ft
             if (n == NULL)
                 return 1;
             if (n->color == RED && ((n->left != NULL && n->left->color == RED )|| (n->right != NULL && n->right->color == RED)))
+            {
+                //print details
+                std::cout << "Node: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "ROOT" : "CHILD") << " Left: " << n->left << " Right: " << n->right << std::endl;
                 return 0;
+            }
             return isRBProper(n->left) && isRBProper(n->right);
         }
         //  deleteFixup
         void deleteFixup(_Node *n)
         {
-
-            while (n && n != root && n->color == BLACK)
-            {
-                if (n == n->parent->left)
-                {
-                    _Node *w = n->parent->right;
-                    if (w->color == RED)
-                    {
-                        w->color = BLACK;
-                        n->parent->color = RED;
-                        rotateLeft(n->parent);
-                        w = n->parent->right;
-                    }
-                    if (w->left->color == BLACK && w->right->color == BLACK)
-                    {
-                        w->color = RED;
-                        n = n->parent;
-                    }
-                    else
-                    {
-                        if (w->right->color == BLACK)
-                        {
-                            w->left->color = BLACK;
-                            w->color = RED;
-                            rotateRight(w);
-                            w = n->parent->right;
-                        }
-                        w->color = n->parent->color;
-                        n->parent->color = BLACK;
-                        w->right->color = BLACK;
-                        rotateLeft(n->parent);
-                        n = root;
-                    }
-                }
-                else
-                {
-                    _Node *w = n->parent->left;
-                    if (w && w->color == RED)
-                    {
-                        w->color = BLACK;
-                        n->parent->color = RED;
-                        rotateRight(n->parent);
-                        w = n->parent->left;
-                    }
-                    if (w->right->color == BLACK && w->left->color == BLACK)
-                    {
-                        w->color = RED;
-                        n = n->parent;
-                    }
-                    else
-                    {
-                        if (w->left->color == BLACK)
-                        {
-                            w->right->color = BLACK;
-                            w->color = RED;
-                            rotateLeft(w);
-                            w = n->parent->left;
-                        }
-                        w->color = n->parent->color;
-                        n->parent->color = BLACK;
-                        w->left->color = BLACK;
-                        rotateRight(n->parent);
-                        n = root;
-                    }
-                }
-            }
+            insertFixup(n);
         }
 
         //transplant
@@ -366,7 +305,7 @@ namespace ft
                 y->color = n->color;
             }
             if (y_original_color == BLACK)
-                deleteFixup(x);
+                insertFixup(x);
         }
 
 
