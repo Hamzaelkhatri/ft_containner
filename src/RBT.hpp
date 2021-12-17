@@ -171,8 +171,9 @@ namespace ft
                 }
                 else
                 {
-                    _Node *u = n->parent->parent->left;
-                    if (u->color == RED)
+                    _Node *u = n->parent->parent->left;// uncle
+                    // check if Node is not empty
+                    if ( u && u->color == RED)// if u is NULL that mean uncle/aunt is NULL and any NULL mean Thats BLACK
                     {
                         n->parent->color = BLACK;
                         u->color = BLACK;
@@ -222,10 +223,12 @@ namespace ft
 
         void printTree(_Node *n)
         {
+            // print tree with details
             if (n == NULL)
                 return;
             printTree(n->left);
-            std::cout << n->key << " ";
+            // print node with key and color and height and if right or left is empty and if root 
+            std::cout << "Key: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "ROOT" : "CHILD") << " Left: " << n->left << " Right: " << n->right << std::endl;
             printTree(n->right);
         }
 
