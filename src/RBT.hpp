@@ -38,19 +38,53 @@ namespace ft
         // struct for red-black tree
         typedef struct Node
         {
-            T key; // Key
+            T key;
             Comparable value;
-            Node *left;
-            Node *right;
-            Node *parent;
-            int height;
-            int color;
+            Node *left = nullptr; // Left child
+            Node *right = nullptr; // Right child
+            Node *parent = nullptr; // Parent
+            Node *end = nullptr; // End of subtree
+            int height = 0; // Height
+            int color = RED; // 
+            // set leftOfend
+            void setLeftOfEnd(Node *node)
+            {
+                end->left = node;
+            }
+            // getend
+            Node *getEnd()
+            {
+                if (end == nullptr)
+                {
+                    end = this;
+                }
+                return end;
+            }
+            //default constructor
+            Node()
+            {
+                key = T();
+                value = Comparable();
+                left = nullptr;
+                right = nullptr;
+                parent = nullptr;
+                end = nullptr;
+                height = 0;
+                color = RED;
+            }
             Node(T k)
             {
+                // add end of tree in the 
                 key = k;
                 left = right = NULL;
                 color = RED;
                 height = 1;
+                end = new Node();
+                end->color = BLACK;
+                end->left = parent;
+                end->right = nullptr;
+                end->parent = nullptr;
+                end->height = 0;
             }
         } _Node;
 
@@ -142,6 +176,11 @@ namespace ft
             makeEmpty(n->right);
             delete n;
         }
+
+        _Node *getRootOfTree()
+        {
+            return root;
+        }
         // insertFixup
         void insertFixup(_Node *n)
         {
@@ -194,12 +233,15 @@ namespace ft
                 }
             }
             root->color = BLACK;
+            root->getEnd()->left = root;
         }
 
         void insert(_Node *n)
         {
             _Node *y = NULL;
             _Node *x = root;
+            // set end in parent of root of tree
+
             while (x != NULL)
             {
                 y = x;
@@ -210,7 +252,9 @@ namespace ft
             }
             n->parent = y;
             if (y == NULL)
+            {
                 root = n;
+            }
             else if (comp(n->key, y->key))
                 y->left = n;
             else
@@ -306,6 +350,7 @@ namespace ft
             }
             if (y_original_color == BLACK)
                 insertFixup(x);
+            delete y;
         }
 
 
@@ -373,10 +418,10 @@ namespace ft
         // end()
         _Node *end()
         {
-            _Node *n = root;
-            while (n->right != NULL)
-                n = n->right;
-            return n;
+            //print left of end
+            std::cout << "Left of end: " << root->getEnd()->left->key << std::endl;
+            std::cout << "Root is " << root->key << std::endl;
+            return root->getEnd();
         }
 
         // delete node
