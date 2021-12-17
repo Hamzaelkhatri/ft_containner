@@ -24,7 +24,7 @@
 namespace ft
 {
 
-    template <class T, typename Comparable = std::less<T>>
+    template <class T, typename Comparable = std::less<T> >
     class RBT
     {
     private:
@@ -40,54 +40,31 @@ namespace ft
         {
             T key;
             Comparable value;
-            Node *left = nullptr;   // Left child
-            Node *right = nullptr;  // Right child
-            Node *parent = nullptr; // Parent
-            Node *end = nullptr;    // End of subtree
-            int height = 0;         // Height
-            int color = RED;        //
-            // set leftOfend
-            void setLeftOfEnd(Node *node)
-            {
-                end->left = node;
-            }
-            // getend
-            Node *getEnd()
-            {
-                if (end == nullptr)
-                {
-                    end = this;
-                }
-                return end;
-            }
-            //default constructor
+            Node *left;   // Left child
+            Node *right;  // Right child
+            Node *parent; // Parent
+            int height;   // Height
+            int color;    //
+
+            // default constructor
             Node()
             {
-                key = T();
-                value = Comparable();
-                left = nullptr;
-                right = nullptr;
-                parent = nullptr;
-                end = nullptr;
+                left = right = parent = NULL;
                 height = 0;
                 color = RED;
             }
+
             Node(T k)
             {
                 key = k;
                 left = right = NULL;
                 color = RED;
                 height = 1;
-                end = new Node();
-                end->color = BLACK;
-                end->left = parent;
-                end->right = nullptr;
-                end->parent = nullptr;
-                end->height = 0;
             }
         } _Node;
 
         _Node *root;
+        _Node *end;
         int size;
         int height;
         Comparable comp;
@@ -234,7 +211,7 @@ namespace ft
                 }
             }
             root->color = BLACK;
-            root->getEnd()->left = root;
+            // root->getEnd()->left = root;
         }
 
         void insert(_Node *n)
@@ -282,8 +259,8 @@ namespace ft
                 return 1;
             if (n->color == RED && ((n->left != NULL && n->left->color == RED) || (n->right != NULL && n->right->color == RED)))
             {
-                //print details
-                std::cout << "Node: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == n->end ? "\033[0;31mROOT\033[0m" : "CHILD ") << " Left: " << n->left << " Right: " << n->right << std::endl;
+                // print details
+                std::cout << "Node: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "\033[0;31mROOT\033[0m" : "CHILD ") << " Left: " << n->left << " Right: " << n->right << std::endl;
                 return 0;
             }
             return isRBProper(n->left) && isRBProper(n->right);
@@ -294,7 +271,7 @@ namespace ft
             insertFixup(n);
         }
 
-        //transplant
+        // transplant
         void transplant(_Node *u, _Node *v)
         {
             if (u->parent == NULL)
@@ -306,7 +283,8 @@ namespace ft
             if (v != NULL)
                 v->parent = u->parent;
         }
-        //treeMinimum
+
+        // treeMinimum
         _Node *treeMinimum(_Node *n)
         {
             while (n->left != NULL)
@@ -361,12 +339,24 @@ namespace ft
             root = NULL;
             size = 0;
             height = 1;
+            end = new _Node(0);
+            end->left = end;
+            end->right = end;
+            end->parent = end;
+            end->color = BLACK;
+            end->height = 1;
+            end->key = std::numeric_limits<int>::max();
         }
         RBT(const RBT<T, Comparable> &rhs)
         {
             root = NULL;
-            size = 0;
-            height = 1;
+            end = new _Node(0);
+            end->left = NULL;
+            end->right = NULL;
+            end->parent = NULL;
+            end->color = -1;
+            end->height = 1;
+            end->key = std::numeric_limits<int>::max();
             *this = rhs;
         }
 
@@ -385,14 +375,12 @@ namespace ft
         // insert using pair with enable if you want to use pair
         void insert(std::pair<T, Comparable> pair)
         {
-            // rebind the pair to the node
             _Node *n = new _Node(pair.first);
             n->value = pair.second;
             insert(n);
+            size++;
+            end->left = n;
         }
-        // void insert(std::pair<T, Comparable> p)
-        // {
-        //     insert(p.first, p.second);
         // }
         void printTree()
         {
@@ -409,13 +397,13 @@ namespace ft
             makeEmpty(root);
         }
 
-        //check if tree has a RED BLACK PROPERTY
+        // check if tree has a RED BLACK PROPERTY
         bool isRBProper()
         {
             return isRBProper(root);
         }
 
-        //search
+        // search
         _Node *search(T key)
         {
             _Node *n = root;
@@ -432,12 +420,9 @@ namespace ft
         }
 
         // end()
-        _Node *end()
+        _Node *_end_()
         {
-            //print left of end
-            std::cout << "Left of end: " << root->getEnd()->left->key << std::endl;
-            std::cout << "Root is " << root->key << std::endl;
-            return root->getEnd();
+            return end;
         }
 
         // delete node
@@ -445,9 +430,42 @@ namespace ft
         {
             _Node *n = search(key);
             if (n != NULL)
+            {
                 deleteNode(n);
+                size--;
+            }
         }
 
+        _Node *_begin_()
+        {
+            return treeMinimum(root);
+        }
+
+        // size
+        int _size_()
+        {
+            return size;
+        }
+
+        // height
+
+        _Node *search(T key, Comparable &value)
+        {
+            _Node *n = root;
+            while (n != NULL)
+            {
+                if (n->key == key)
+                {
+                    value = n->value;
+                    return n;
+                }
+                else if (n->key > key)
+                    n = n->left;
+                else
+                    n = n->right;
+            }
+            return NULL;
+        }
         ~RBT()
         {
             makeEmpty();
