@@ -1,7 +1,6 @@
 #include "RBT.hpp"
 #include <iostream>
-#include <map>
-
+// #include "map."
 // define COLORS for terminal
 #define RED "\033[0;31m"
 #define GREEN "\033[0;32m"
@@ -13,21 +12,52 @@
 
 int main()
 {
-
+    ft::RBT<std::string, std::string> tree;
+    // insert using pair main.cpp:21:17: note: in instantiation of function template specialization 'std::__1::pair<std::__1::basic_string<char>, std::__1::less<std::__1::basic_string<char> > >::pair<const char *, const char *>' requested here
+    // tree.insert(std::pair<std::string, std::string>("hello", "world"));
     // add values to the tree with pair
-    ft::RBT<int, std::string> tree;
-    tree.insert(std::pair<int, std::string>(1, "1"));
-    tree.insert(std::pair<int, std::string>(2, "2"));
-    tree.insert(std::pair<int, std::string>(3, "3"));
-    tree.insert(std::pair<int, std::string>(4, "4"));
-    tree.insert(std::pair<int, std::string>(5, "5"));
-    tree.insert(std::pair<int, std::string>(6, "6"));
-    tree.printTree();
-    std::cout << (tree.isRBProper() ? "\033[0;32mGOOD RBT" : "\033[0;31mNOT GOOD RDT") << RESET << std::endl;
-    std::cout << tree._end_() << std::endl;
-    std::cout << tree.search(2) << std::endl;
-    std::cout << tree._begin_() << std::endl;
-    std::cout << tree._size_() << std::endl;
+    // tree[-100] = "world";
+    // tree[-1] = "world2";
+    // tree[-71] = "world3";
+    // tree[741] = "world4";
+    // tree[-252] = "world5";
+    // tree[252] = "world5";
 
+    // print the tree
+    // int i = -101;
+    // // std::cout << "Print the map with iterato: " << tree.size() << std::endl;
+    // while (i < tree.size())
+    // {
+    //     std::cout << tree[i] << std::endl;
+    //     i++;
+    // }
+
+    // tree.insert(std::pair<int, std::string>(1, "1"));
+    // tree.insert(std::pair<int, std::string>(2, "2"));
+    // tree.insert(std::pair<int, std::string>(3, "3"));
+    // tree.insert(std::pair<int, std::string>(4, "4"));
+    // tree.insert(std::pair<int, std::string>(5, "5"));
+    // tree.insert(std::pair<int, std::string>(6, "6"));
+    // tree.printTree();
+    // std::cout << (tree.isRBProper() ? "\033[0;32mGOOD RBT" : "\033[0;31mNOT GOOD RDT") << RESET << std::endl;
+    // std::cout << tree._end_() << std::endl;
+    // std::cout << tree.search(2) << std::endl;
+    // std::cout << tree._begin_() << std::endl;
+    // std::cout << tree._size_() << std::endl;
+
+    // add a lot of values to the tree
+
+    for (int i = 0; i < 100; i++)
+    {
+        tree.insert(std::pair<std::string, std::string>(std::to_string(i), std::to_string(i)));
+    }
+    tree.printTree();
+    std::cout << "size of tree " << tree._size_() << "\n"
+              << (tree.isRBProper() ? "\033[0;32mGOOD RBT" : "\033[0;31mNOT GOOD RDT") << RESET << std::endl;
+    // remove a value from the tree
+    tree.printTree();
+    std::cout << "size of tree " << tree._size_() << "\n"
+              << (tree.isRBProper() ? "\033[0;32mGOOD RBT" : "\033[0;31mNOT GOOD RDT") << RESET << std::endl;
+    // tree._end_();
     return 0;
 }

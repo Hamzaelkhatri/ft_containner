@@ -2,7 +2,8 @@
 #define RBT_HPP
 
 #include <iostream>
-
+#include <fstream>
+#include <utility>
 // Red-Black Tree class
 //
 // CONSTRUCTION: with (a) no parameters
@@ -11,7 +12,7 @@
 //  void insert( x )       --> Insert x
 //  void remove( x )       --> Remove x (unimplemented)
 //  bool contains( x )     --> Return true if x is present
-//  Comparable findMin( )  --> Return smallest item
+//  Compare findMin( )  --> Return smallest item
 //  Comparable findMax( )  --> Return largest item
 //  boolean isEmpty( )     --> Return true if empty; else false
 //  void makeEmpty( )      --> Remove all items
@@ -24,7 +25,11 @@
 namespace ft
 {
 
-    template <class T, typename Comparable = std::less<T> >
+    template <class Key,                                             // map::key_type
+              class T,                                               // map::mapped_type
+              class Compare = std::less<Key>,                        // map::key_compare
+              class Alloc = std::allocator<std::pair<const Key, T> > // map::allocator_type
+              >
     class RBT
     {
     private:
@@ -38,8 +43,8 @@ namespace ft
         // struct for red-black tree
         typedef struct Node
         {
-            T key;
-            Comparable value;
+            Key key;
+            T value;
             Node *left;   // Left child
             Node *right;  // Right child
             Node *parent; // Parent
@@ -67,7 +72,7 @@ namespace ft
         _Node *end;
         int size;
         int height;
-        Comparable comp;
+        Compare comp;
         _Node *NIL;
         _Node *grandparent(_Node *n)
         {
@@ -170,7 +175,7 @@ namespace ft
                     if (u && u->color == RED)
                     {
                         n->parent->color = BLACK;
-                        u->color = BLACK;
+                        u->color = RED;
                         n->parent->parent->color = RED;
                         n = n->parent->parent;
                     }
@@ -190,7 +195,7 @@ namespace ft
                 {
                     _Node *u = n->parent->parent->left; // uncle
                     // check if Node is not empty
-                    if (u && u->color == RED) // if u is NULL that mean uncle/aunt is NULL and any NULL mean Thats BLACK
+                    if (u && u->color == RED)
                     {
                         n->parent->color = BLACK;
                         u->color = BLACK;
@@ -211,19 +216,17 @@ namespace ft
                 }
             }
             root->color = BLACK;
-            // root->getEnd()->left = root;
         }
 
-        void insert(_Node *n)
+        void insert(_Node *n) // 1 ---->
         {
             _Node *y = NULL;
             _Node *x = root;
-            // set end in parent of root of tree
 
             while (x != NULL)
             {
                 y = x;
-                if (n->key < x->key)
+                if (n->key < x->key) // 1 2 3 5
                     x = x->left;
                 else
                     x = x->right;
@@ -265,6 +268,7 @@ namespace ft
             }
             return isRBProper(n->left) && isRBProper(n->right);
         }
+
         //  deleteFixup
         void deleteFixup(_Node *n)
         {
@@ -314,13 +318,17 @@ namespace ft
                 y = treeMinimum(n->right);
                 y_original_color = y->color;
                 x = y->right;
-                if (y->parent == n)
+                if (x && y->parent == n)
                     x->parent = y;
                 else
                 {
-                    transplant(y, y->right);
-                    y->right = n->right;
-                    y->right->parent = y;
+                    if (y->parent != n)
+                    {
+                        z = y->parent;
+                        transplant(y, y->right);
+                        y->right = n->right;
+                        y->right->parent = y;
+                    }
                 }
                 transplant(n, y);
                 y->left = n->left;
@@ -329,7 +337,6 @@ namespace ft
             }
             if (y_original_color == BLACK)
                 insertFixup(x);
-            delete y;
         }
 
     public:
@@ -339,15 +346,14 @@ namespace ft
             root = NULL;
             size = 0;
             height = 1;
-            end = new _Node(0);
+            end = new _Node(std::numeric_limits<T>::max());
             end->left = end;
             end->right = end;
             end->parent = end;
             end->color = BLACK;
             end->height = 1;
-            end->key = std::numeric_limits<int>::max();
         }
-        RBT(const RBT<T, Comparable> &rhs)
+        RBT(const RBT<T, Compare> &rhs)
         {
             root = NULL;
             end = new _Node(0);
@@ -360,7 +366,7 @@ namespace ft
             *this = rhs;
         }
 
-        void insert(T key, Comparable value)
+        void insert(T key, Compare value)
         {
             _Node *n = new _Node(key);
             n->value = value;
@@ -373,23 +379,26 @@ namespace ft
         }
 
         // insert using pair with enable if you want to use pair
-        void insert(std::pair<T, Comparable> pair)
+        void insert(std::pair<Key, T> pair)
         {
+            // use allocator for rebind to use custom allocator
             _Node *n = new _Node(pair.first);
             n->value = pair.second;
             insert(n);
             size++;
-            end->left = n;
         }
-        // }
+
         void printTree()
         {
             printTree(root);
         }
 
-        void addPair(std::pair<int, int> key)
+        void addPair(std::pair<T, Compare> pair)
         {
-            insert(key.first, key.second);
+            // use allocator for rebind to use custom allocator
+            _Node *n = new _Node(pair.first);
+            n->value = pair.second;
+            insert(n);
         }
 
         void makeEmpty()
@@ -422,6 +431,12 @@ namespace ft
         // end()
         _Node *_end_()
         {
+            // get the maximum element
+            _Node *n = root;
+            while (n->right != NULL)
+                n = n->right;
+
+            std::cout << "end: " << end << " root :" << std::endl;
             return end;
         }
 
@@ -449,7 +464,7 @@ namespace ft
 
         // height
 
-        _Node *search(T key, Comparable &value)
+        _Node *search(T key, Compare &value)
         {
             _Node *n = root;
             while (n != NULL)
@@ -466,6 +481,7 @@ namespace ft
             }
             return NULL;
         }
+        // insert
         ~RBT()
         {
             makeEmpty();
@@ -473,4 +489,4 @@ namespace ft
     };
 };
 
-#endif // RBT_HPP
+#endif // RBT_HPP∂
