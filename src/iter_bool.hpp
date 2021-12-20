@@ -174,10 +174,10 @@ namespace ft
         }
 
         template <class U, class V>
-        pair(const pair<U, V> &pr) : first_type(pr.first), second_type(pr.second)
+        pair(const pair<U, V> &pr) : first(pr.first), second(pr.second)
         {
         }
-        pair(const first_type &a, const second_type &b) : first_type(a), second_type(b)
+        pair(const first_type &a, const second_type &b) : first(a), second(b)
         {
         }
         // implicit declaration of copy constructor

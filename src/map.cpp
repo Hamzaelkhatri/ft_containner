@@ -3,6 +3,9 @@
 #include <string>
 #include <map>
 #include "map.hpp"
+#include <utility>
+#include "iterators.hpp"
+#include "iter_bool.hpp"
 
 enum Color
 {
@@ -173,7 +176,21 @@ int main()
 
     // test Tree
     Node *root = NULL;
-    // int i = 0;
+    int i = 0;
+    ft::map<std::string, std::string> map;
+
+    //insert in loop
+    while (i < 10)
+    {
+        std::string key = "key" + std::to_string(i);
+        std::string value = "value" + std::to_string(i);
+        map.insert(std::pair<std::string, std::string>(key, value));
+        i++;
+    }
+
+    map.print();
+    
+    // map.insert(std::pair<int, std::string>(1, "one"));
     // while (i < 1000)
     // {
     //     InsertNewNode(root, i, "test");
@@ -201,7 +218,6 @@ int main()
     //     std::cout << "\nThe node is not found" << std::endl;
 
     // compare beteen map and red-black tree
-    std::map<int, std::string> map;
     // map[10] = "10";
     // map[20] = "20";
     // map[30] = "30";
