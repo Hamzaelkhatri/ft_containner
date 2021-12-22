@@ -175,20 +175,20 @@ int main()
     // 8. Exit
 
     // test Tree
-    Node *root = NULL;
-    int i = 0;
-    ft::map<std::string, std::string> map;
+    // Node *root = NULL;
+    // int i = 0;
+    // ft::map<std::string, std::string> map;
 
-    //insert in loop
-    while (i < 10)
-    {
-        std::string key = "key" + std::to_string(i);
-        std::string value = "value" + std::to_string(i);
-        map.insert(std::pair<std::string, std::string>(key, value));
-        i++;
-    }
+    // //insert in loop
+    // while (i < 10)
+    // {
+    //     std::string key = "key" + std::to_string(i);
+    //     std::string value = "value" + std::to_string(i);
+    //     map.insert(std::pair<std::string, std::string>(key, value));
+    //     i++;
+    // }
 
-    map.print();
+    // map.print();
     
     // map.insert(std::pair<int, std::string>(1, "one"));
     // while (i < 1000)

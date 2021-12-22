@@ -13,14 +13,22 @@
 
 int main()
 {
-    ft::RBT<std::string, std::string> tree;
+    ft::RBT<int, int> tree;
     // insert using pair main.cpp:21:17: note: in instantiation of function template specialization 'std::__1::pair<std::__1::basic_string<char>, std::__1::less<std::__1::basic_string<char> > >::pair<const char *, const char *>' requested here
     // add values to the tree with pair
-    tree.insert(std::make_pair("red", "apple"));
-    tree.insert(std::make_pair("green", "lemon"));
-    tree.insert(std::make_pair("yellow", "banana"));
-    tree.insert(std::make_pair("blue", "blueberry"));
+    // tree.insert(std::make_pair("red", "apple"));
+    // tree.insert(std::make_pair("green", "lemon"));
+    // tree.insert(std::make_pair("yellow", "banana"));
+    // tree.insert(std::make_pair("blue", "blueberry"));
+    tree.insert(std::make_pair(2, 2));
+    tree.insert(std::make_pair(1, 1));
+    tree.insert(std::make_pair(3, 3));
+    tree.insert(std::make_pair(4, 4));
+    tree.insert(std::make_pair(5, 5));
+    tree.insert(std::make_pair(6, 6));
+    tree.insert(std::make_pair(7, 7));
     
+    tree.deleteNode(1);
     // tree[-100] = "world";
     // tree[-1] = "world2";
     // tree[-71] = "world3";
