@@ -50,6 +50,7 @@ namespace ft
         {
             left = right = parent = NULL;
             height = 1;
+            value = std::numeric_limits<Key>::max();
             color = BLACK;
         }
 
@@ -57,7 +58,7 @@ namespace ft
         {
             value = v;
             key = k;
-            left = right = NULL;
+            left = right = parent = NULL;
             color = RED;
             height = 1;
         }
@@ -104,7 +105,13 @@ namespace ft
                 return g->left;
         }
 
-        // update height of a node
+        // struct Node<Key,T> treeMinimum(struct Node<Key, T> *n)
+        // {
+        //     while (n->left != nil)
+        //         n = n->left;
+        //     return n;
+        // }
+        // update height of a Node
         void
         updateHeight(struct Node<Key, T> *n)
         {
@@ -290,7 +297,7 @@ namespace ft
         void printTree(struct Node<Key, T> *n)
         {
             // print tree with details
-            if (n == nil)
+            if (n == nil || !n)
                 return;
             printTree(n->left);
             std::cout << "adrs of node " << n << " Key: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == nil ? "\033[0;31mROOT " : "CHILD ") << "\033[0mLeft: " << (n->left != nil ? std::to_string(n->left->key) : "nil") << " Right: " << (n->right != nil ? std::to_string(n->right->key) : "nil") << std::endl;
@@ -319,13 +326,13 @@ namespace ft
         // transplant
         void transplant(struct Node<Key, T> *u, struct Node<Key, T> *v)
         {
-            if (u->parent == nil)
+            if (u->parent == NULL)
                 root = v;
             else if (u == u->parent->left)
                 u->parent->left = v;
             else
                 u->parent->right = v;
-            if (v != nil)
+            if (v)
                 v->parent = u->parent;
         }
 
@@ -338,131 +345,136 @@ namespace ft
         }
 
         void
-        deleteFixup(struct Node<Key, T> *n)
+        deleteFixup(struct Node<Key, T> *x)
         {
-            while (n && n != root && n->color == RED)
+            struct Node<Key, T> *tmp;
+
+            while (x && x != root && x->color == BLACK)
             {
-                if (n->parent && n == n->parent->left)
+                if (x == x->parent->left)
                 {
-                    struct Node<Key, T> *w = n->parent->right;
-                    if (w->color == RED)
+                    tmp = x->parent->right;
+                    if (tmp->color == RED)
                     {
-                        w->color = BLACK;
-                        n->parent->color = RED;
-                        rotateLeft(n->parent);
-                        w = n->parent->right;
+                        tmp->color = BLACK;
+                        x->parent->color = RED;
+                        rotateLeft(x->parent);
+                        tmp = x->parent->right;
                     }
-                    if (w->left->color == BLACK && w->right->color == BLACK)
+                    if ((tmp && (tmp->left->color == BLACK && tmp->right->color == BLACK)) || (tmp->left == NULL && tmp->right == NULL))
                     {
-                        w->color = RED;
-                        n = n->parent;
+                        tmp->color = RED;
+                        x = x->parent;
                     }
                     else
                     {
-                        if (w->right->color == BLACK)
+                        if (tmp->right->color == BLACK)
                         {
-                            w->left->color = BLACK;
-                            w->color = RED;
-                            rotateRight(w);
-                            w = n->parent->right;
+                            tmp->left->color = BLACK;
+                            tmp->color = RED;
+                            rotateRight(tmp);
+                            tmp = x->parent->right;
                         }
-                        w->color = n->parent->color;
-                        n->parent->color = BLACK;
-                        w->right->color = BLACK;
-                        rotateLeft(n->parent);
-                        n = root;
+                        tmp->color = x->parent->color;
+                        x->parent->color = BLACK;
+                        tmp->right->color = BLACK;
+                        rotateLeft(x->parent);
+                        x = root;
                     }
                 }
                 else
                 {
-                    struct Node<Key, T> *w = n->parent->left;
-                    if (w->color == RED)
+                    tmp = x->parent->left;
+                    if (tmp->color == RED)
                     {
-                        w->color = BLACK;
-                        n->parent->color = RED;
-                        rotateRight(n->parent);
-                        w = n->parent->left;
+                        tmp->color = BLACK;
+                        x->parent->color = RED;
+                        rotateRight(x->parent);
+                        tmp = x->parent->left;
                     }
-                    if (w->right->color == BLACK && w->left->color == BLACK)
+                    if ((tmp && (tmp->left->color == BLACK && tmp->right->color == BLACK)) || (tmp->left == NULL && tmp->right == NULL))
                     {
-                        w->color = RED;
-                        n = n->parent;
+                        tmp->color = RED;
+                        x = x->parent;
                     }
                     else
                     {
-                        if (w->left->color == BLACK)
+                        if (tmp->left->color == BLACK)
                         {
-                            w->right->color = BLACK;
-                            w->color = RED;
-                            rotateLeft(w);
-                            w = n->parent->left;
+                            tmp->right->color = BLACK;
+                            tmp->color = RED;
+                            rotateLeft(tmp);
+                            tmp = x->parent->left;
                         }
-                        w->color = n->parent->color;
-                        n->parent->color = BLACK;
-                        w->left->color = BLACK;
-                        rotateRight(n->parent);
-                        n = root;
+                        tmp->color = x->parent->color;
+                        x->parent->color = BLACK;
+                        tmp->left->color = BLACK;
+
+                        rotateRight(x->parent);
+                        x = root;
                     }
                 }
             }
-            n->color = BLACK;
+            x->color = BLACK;
         }
 
         // delete
-        void
-        deleteNode(struct Node<Key, T> *n)
-        {
-            struct Node<Key, T> *x = nil;
-            struct Node<Key, T> *y = n;
-            struct Node<Key, T> *z = nil;
-            bool y_original_color = y->color;
-            if (n->left == nil)
-            {
-                x = n->right;
-                transplant(n, n->right);
-            }
-            else if (n->right == nil)
-            {
-                x = n->left;
-                transplant(n, n->left);
-            }
-            else
-            {
-                y = treeMinimum(n->right);
-                y_original_color = y->color;
-                x = y->right;
-                if (y->parent == n)
-                    x->parent = y;
-                else
-                {
-                    if (y->parent != n)
-                    {
-                        z = y->parent;
-                        transplant(y, y->right);
-                        y->right = n->right;
-                        y->right->parent = y;
-                    }
-                }
-                transplant(n, y);
-                y->left = n->left;
-                y->left->parent = y;
-                y->color = n->color;
-            }
-            // fix root->height
-            if (y_original_color == BLACK)
-            {
-                deleteFixup(x);
-            }
-            if (cout_right_height() > cout_left_height())
-            {
-                rotateLeft(root);
-            }
-            else if (cout_right_height() < cout_left_height())
-            {
-                rotateRight(root);
-            }
-            root->color = BLACK;
-        }
+        // void
+        // deleteNode(struct Node<Key, T> *n)
+        // {
+        //     struct Node<Key, T> *x = nil;
+        //     struct Node<Key, T> *y = n;
+        //     struct Node<Key, T> *z = nil;
+        //     bool y_original_color = y->color;
+        //     if (n->left == nil)
+        //     {
+        //         x = n->right;
+        //         transplant(n, n->right);
+        //     }
+        //     else if (n->right == nil)
+        //     {
+        //         x = n->left;
+        //         transplant(n, n->left);
+        //     }
+        //     else
+        //     {
+        //         y = treeMinimum(n->right);
+        //         y_original_color = y->color;
+        //         x = y->right;
+        //         if (y->parent == n)
+        //             x->parent = y;
+        //         else
+        //         {
+        //             if (y->parent != n)
+        //             {
+        //                 z = y->parent;
+        //                 transplant(y, y->right);
+        //                 y->right = n->right;
+        //                 y->right->parent = y;
+        //             }
+        //         }
+        //         transplant(n, y);
+        //         y->left = n->left;
+        //         y->left->parent = y;
+        //         y->color = n->color;
+        //     }
+        //     // fix root->height
+        //     if (y_original_color == BLACK)
+        //     {
+        //         // print parent of x
+        //         deleteFixup(x);
+        //         exit(0);
+        //     }
+        //     if (cout_right_height() > cout_left_height())
+        //     {
+        //         rotateLeft(root);
+        //     }
+        //     else if (cout_right_height() < cout_left_height())
+        //     {
+        //         rotateRight(root);
+        //     }
+        //     root->color = BLACK;
+        // }
 
     public:
         RBT()
@@ -472,11 +484,6 @@ namespace ft
             nil->left = NULL;
             nil->right = NULL;
             root = nil;
-            root->color = BLACK;
-            root->left = nil;
-            root->right = nil;
-            root->parent = NULL;
-            size = 0;
             height = 1;
             end = new struct Node<Key, T>(std::numeric_limits<Key>::max(), std::numeric_limits<T>::max());
             end->left = end;
@@ -510,11 +517,6 @@ namespace ft
             n->value = value;
             insert(n);
         }
-        // void insert(T key)
-        // {
-        //     struct Node<Key,T> *n = new struct Node<Key,T>(key);
-        //     insert(n);
-        // }
 
         // insert using pair with enable if you want to use pair
         void insert(std::pair<Key, T> pair)
@@ -584,12 +586,55 @@ namespace ft
         void
         deleteNode(T key)
         {
-            struct Node<Key, T> *n = search(key);
-            if (n != nil)
+            struct Node<Key, T> *x = NULL;
+            struct Node<Key, T> *y = nil;
+            struct Node<Key, T> *_node = search(key);
+            if (_node == nil)
+                return;
+            y = _node;
+            bool y_original_color = y->color;
+            if (_node->left == nil)
             {
-                deleteNode(n);
-                size--;
+                x = _node->right;
+                transplant(_node, _node->right);
             }
+            else if (_node->right == nil)
+            {
+                x = _node->left;
+                transplant(_node, _node->left);
+            }
+            else
+            {
+
+                y = treeMinimum(_node->right);
+                y_original_color = y->color;
+                x = y->right;
+                if (x && y->parent == _node)
+                {
+                    x->parent = y;
+                }
+                else
+                {
+                    transplant(y, y->right);
+                    y->right = _node->right;
+                    if (y->right)
+                        y->right->parent = y;
+                }
+                transplant(_node, y);
+                y->left = _node->left;
+                y->left->parent = y;
+                y->color = _node->color;
+            }
+
+            if (_node)
+                delete _node;
+            // std::cout << "SEARCHED : " << x->key << std::endl;
+            if (y_original_color == BLACK)
+            {
+                deleteFixup(x);
+            }
+            if (root != nil && root)
+                root->color = BLACK;
         }
 
         struct Node<Key, T> *_begin_()
@@ -626,7 +671,7 @@ namespace ft
         // insert
         ~RBT()
         {
-            makeEmpty();
+            // makeEmpty();
         }
         //constractor
 

@@ -29,6 +29,10 @@ int main()
     tree.insert(std::make_pair(7, 7));
     
     tree.deleteNode(1);
+    tree.deleteNode(7);
+    tree.deleteNode(5);
+    tree.printTree();
+
     // tree[-100] = "world";
     // tree[-1] = "world2";
     // tree[-71] = "world3";
@@ -68,7 +72,7 @@ int main()
     // std::cout << "size of tree " << tree._size_() << "\n"
     //           << (tree.isRBProper() ? "\033[0;32mGOOD RBT" : "\033[0;31mNOT GOOD RDT") << RESET << std::endl;
     // // remove a value from the tree
-    tree.printTree();
+
     // std::cout << "size of tree " << tree._size_() << "\n"
             //   << (tree.isRBProper() ? "\033[0;32mGOOD RBT" : "\033[0;31mNOT GOOD RDT") << RESET << std::endl;
     // tree._end_();
