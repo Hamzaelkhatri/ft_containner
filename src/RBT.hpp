@@ -49,8 +49,8 @@ namespace ft
         Node()
         {
             left = right = parent = NULL;
-            height = 0;
-            color = RED;
+            height = 1;
+            color = BLACK;
         }
 
         Node(Key k, T v)
@@ -80,14 +80,15 @@ namespace ft
 
         struct Node<Key, T> *root;
         struct Node<Key, T> *end;
+        struct Node<Key, T> *nil; // = new Node<Key, T>();
         int size;
         int height;
         Compare comp;
         Alloc alloc;
         struct Node<Key, T> *grandparent(struct Node<Key, T> *n)
         {
-            if (n == NULL || n->parent == NULL)
-                return NULL;
+            if (n == NULL || n->parent == NULL || n == nil || n->parent == nil)
+                return nil;
             return n->parent->parent;
         }
 
@@ -95,8 +96,8 @@ namespace ft
         uncle(struct Node<Key, T> *n)
         {
             struct Node<Key, T> *g = grandparent(n);
-            if (g == NULL)
-                return NULL;
+            if (g == nil)
+                return nil;
             if (n->parent == g->left)
                 return g->right;
             else
@@ -107,8 +108,8 @@ namespace ft
         void
         updateHeight(struct Node<Key, T> *n)
         {
-            int hl = (n->left == NULL) ? 0 : n->left->height;
-            int hr = (n->right == NULL) ? 0 : n->right->height;
+            int hl = (n->left == nil) ? 0 : n->left->height;
+            int hr = (n->right == nil) ? 0 : n->right->height;
             n->height = (hl > hr ? hl : hr) + 1;
         }
 
@@ -116,10 +117,10 @@ namespace ft
         {
             struct Node<Key, T> *r = n->right;
             n->right = r->left;
-            if (r->left != NULL)
+            if (r->left != nil)
                 r->left->parent = n;
             r->parent = n->parent;
-            if (n->parent == NULL)
+            if (n->parent == nil)
                 root = r;
             else if (n == n->parent->left)
                 n->parent->left = r;
@@ -135,10 +136,10 @@ namespace ft
         {
             struct Node<Key, T> *l = n->left;
             n->left = l->right;
-            if (l->right != NULL)
+            if (l->right != nil)
                 l->right->parent = n;
             l->parent = n->parent;
-            if (n->parent == NULL)
+            if (n->parent == nil)
                 root = l;
             else if (n == n->parent->left)
                 n->parent->left = l;
@@ -164,7 +165,7 @@ namespace ft
 
         void makeEmpty(struct Node<Key, T> *n)
         {
-            if (n == NULL)
+            if (n == nil)
                 return;
             makeEmpty(n->left);
             makeEmpty(n->right);
@@ -235,7 +236,7 @@ namespace ft
         {
             int count = 0;
             struct Node<Key, T> *temp = root;
-            while (temp->left != NULL)
+            while (temp->left != nil)
             {
                 temp = temp->left;
                 if (temp->color == BLACK)
@@ -249,7 +250,7 @@ namespace ft
         {
             int count = 0;
             struct Node<Key, T> *temp = root;
-            while (temp->right != NULL)
+            while (temp->right != nil)
             {
                 temp = temp->right;
                 if (temp->color == BLACK)
@@ -260,10 +261,10 @@ namespace ft
 
         void insert(struct Node<Key, T> *n) // 1 ---->
         {
-            struct Node<Key, T> *y = NULL;
+            struct Node<Key, T> *y = nil;
             struct Node<Key, T> *x = root;
 
-            while (x != NULL)
+            while (x != nil)
             {
                 y = x;
                 if (n->key < x->key) // 1 2 3 5
@@ -272,7 +273,7 @@ namespace ft
                     x = x->right;
             }
             n->parent = y;
-            if (y == NULL)
+            if (y == nil)
             {
                 root = n;
             }
@@ -280,7 +281,7 @@ namespace ft
                 y->left = n;
             else
                 y->right = n;
-            n->left = n->right = NULL;
+            n->left = n->right = nil;
             n->color = RED;
             n->height = 1;
             insertFixup(n);
@@ -289,67 +290,138 @@ namespace ft
         void printTree(struct Node<Key, T> *n)
         {
             // print tree with details
-            if (n == NULL)
+            if (n == nil)
                 return;
             printTree(n->left);
-            std::cout << "adrs of node " << n <<   " Key: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "\033[0;31mROOT " : "CHILD ") << "\033[0mLeft: " << n->left << " Right: " << n->right << std::endl;
+            std::cout << "adrs of node " << n << " Key: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == nil ? "\033[0;31mROOT " : "CHILD ") << "\033[0mLeft: " << (n->left != nil ? std::to_string(n->left->key) : "nil") << " Right: " << (n->right != nil ? std::to_string(n->right->key) : "nil") << std::endl;
             printTree(n->right);
         }
 
         int isRBProper(struct Node<Key, T> *n)
         {
-            if (n == NULL)
+            if (n == nil)
                 return 1;
-            if (n->color == RED && ((n->left != NULL && n->left->color == RED) || (n->right != NULL && n->right->color == RED)))
+            if (n->color == RED && ((n->left != nil && n->left->color == RED) || (n->right != nil && n->right->color == RED)))
             {
                 // print details
-                std::cout << "adrs of node " << n <<   " Node: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "\033[0;31mROOT\033[0m" : "CHILD ") << " Left: " << n->left << " Right: " << n->right << std::endl;
+                std::cout << "adrs of node " << n << " Node: " << n->key << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == nil ? "\033[0;31mROOT\033[0m" : "CHILD ") << " Left: " << (n->left != nil ? std::to_string(n->left->key) : "nil") << " Right: " << (n->right != nil ? std::to_string(n->right->key) : "nil") << std::endl;
                 return 0;
             }
             return isRBProper(n->left) && isRBProper(n->right);
         }
 
         //  deleteFixup
-        void deleteFixup(struct Node<Key, T> *n)
-        {
-            insertFixup(n);
-        }
+        // void deleteFixup(struct Node<Key, T> *n)
+        // {
+        //     insertFixup(n);
+        // }
 
         // transplant
         void transplant(struct Node<Key, T> *u, struct Node<Key, T> *v)
         {
-            if (u->parent == NULL)
+            if (u->parent == nil)
                 root = v;
             else if (u == u->parent->left)
                 u->parent->left = v;
             else
                 u->parent->right = v;
-            if (v != NULL)
+            if (v != nil)
                 v->parent = u->parent;
         }
 
         // treeMinimum
         struct Node<Key, T> *treeMinimum(struct Node<Key, T> *n)
         {
-            while (n->left != NULL)
+            while (n->left != nil)
                 n = n->left;
             return n;
+        }
+
+        void
+        deleteFixup(struct Node<Key, T> *n)
+        {
+            while (n && n != root && n->color == RED)
+            {
+                if (n->parent && n == n->parent->left)
+                {
+                    struct Node<Key, T> *w = n->parent->right;
+                    if (w->color == RED)
+                    {
+                        w->color = BLACK;
+                        n->parent->color = RED;
+                        rotateLeft(n->parent);
+                        w = n->parent->right;
+                    }
+                    if (w->left->color == BLACK && w->right->color == BLACK)
+                    {
+                        w->color = RED;
+                        n = n->parent;
+                    }
+                    else
+                    {
+                        if (w->right->color == BLACK)
+                        {
+                            w->left->color = BLACK;
+                            w->color = RED;
+                            rotateRight(w);
+                            w = n->parent->right;
+                        }
+                        w->color = n->parent->color;
+                        n->parent->color = BLACK;
+                        w->right->color = BLACK;
+                        rotateLeft(n->parent);
+                        n = root;
+                    }
+                }
+                else
+                {
+                    struct Node<Key, T> *w = n->parent->left;
+                    if (w->color == RED)
+                    {
+                        w->color = BLACK;
+                        n->parent->color = RED;
+                        rotateRight(n->parent);
+                        w = n->parent->left;
+                    }
+                    if (w->right->color == BLACK && w->left->color == BLACK)
+                    {
+                        w->color = RED;
+                        n = n->parent;
+                    }
+                    else
+                    {
+                        if (w->left->color == BLACK)
+                        {
+                            w->right->color = BLACK;
+                            w->color = RED;
+                            rotateLeft(w);
+                            w = n->parent->left;
+                        }
+                        w->color = n->parent->color;
+                        n->parent->color = BLACK;
+                        w->left->color = BLACK;
+                        rotateRight(n->parent);
+                        n = root;
+                    }
+                }
+            }
+            n->color = BLACK;
         }
 
         // delete
         void
         deleteNode(struct Node<Key, T> *n)
         {
-            struct Node<Key, T> *x = NULL;
+            struct Node<Key, T> *x = nil;
             struct Node<Key, T> *y = n;
-            struct Node<Key, T> *z = NULL;
+            struct Node<Key, T> *z = nil;
             bool y_original_color = y->color;
-            if (n->left == NULL)
+            if (n->left == nil)
             {
                 x = n->right;
                 transplant(n, n->right);
             }
-            else if (n->right == NULL)
+            else if (n->right == nil)
             {
                 x = n->left;
                 transplant(n, n->left);
@@ -359,7 +431,7 @@ namespace ft
                 y = treeMinimum(n->right);
                 y_original_color = y->color;
                 x = y->right;
-                if (x && y->parent == n)
+                if (y->parent == n)
                     x->parent = y;
                 else
                 {
@@ -379,28 +451,31 @@ namespace ft
             // fix root->height
             if (y_original_color == BLACK)
             {
-                insertFixup(x);
-                // fixNumberLeaf(root);
+                deleteFixup(x);
             }
-            std::cout << cout_right_height() << " " << cout_left_height() << std::endl;
-            if(cout_right_height() > cout_left_height())
+            if (cout_right_height() > cout_left_height())
             {
-                // rotate left
                 rotateLeft(root);
-
             }
-            else if(cout_right_height() < cout_left_height())
+            else if (cout_right_height() < cout_left_height())
             {
-                // rotate right
                 rotateRight(root);
             }
+            root->color = BLACK;
         }
-
 
     public:
         RBT()
         {
-            root = NULL;
+            nil = new Node<Key, T>();
+            nil->color = BLACK;
+            nil->left = NULL;
+            nil->right = NULL;
+            root = nil;
+            root->color = BLACK;
+            root->left = nil;
+            root->right = nil;
+            root->parent = NULL;
             size = 0;
             height = 1;
             end = new struct Node<Key, T>(std::numeric_limits<Key>::max(), std::numeric_limits<T>::max());
@@ -412,12 +487,18 @@ namespace ft
         }
         RBT(const RBT<T, Compare> &rhs)
         {
-            root = NULL;
+            nil = new Node<Key, T>();
+            root = nil;
+            root->color = BLACK;
+            root->left = nil;
+            root->right = nil;
+            size = 0;
+            root->parent = NULL;
             end = new struct Node<Key, T>(0);
-            end->left = NULL;
-            end->right = NULL;
+            end->left = nil;
+            end->right = nil;
             end->parent = NULL;
-            end->color = -1;
+            end->color = RED;
             end->height = 1;
             end->key = std::numeric_limits<int>::max();
             *this = rhs;
@@ -474,7 +555,7 @@ namespace ft
         struct Node<Key, T> *search(T key)
         {
             struct Node<Key, T> *n = root;
-            while (n != NULL)
+            while (n != nil)
             {
                 if (n->key == key)
                     return n;
@@ -483,7 +564,7 @@ namespace ft
                 else
                     n = n->right;
             }
-            return NULL;
+            return nil;
         }
 
         // end()
@@ -492,7 +573,7 @@ namespace ft
         {
             // get the maximum element
             struct Node<Key, T> *n = root;
-            while (n->right != NULL)
+            while (n->right != nil)
                 n = n->right;
 
             std::cout << "end: " << end << " root :" << std::endl;
@@ -504,7 +585,7 @@ namespace ft
         deleteNode(T key)
         {
             struct Node<Key, T> *n = search(key);
-            if (n != NULL)
+            if (n != nil)
             {
                 deleteNode(n);
                 size--;
@@ -528,7 +609,7 @@ namespace ft
         struct Node<Key, T> *search(T key, Compare &value)
         {
             struct Node<Key, T> *n = root;
-            while (n != NULL)
+            while (n != nil)
             {
                 if (n->key == key)
                 {
@@ -540,7 +621,7 @@ namespace ft
                 else
                     n = n->right;
             }
-            return NULL;
+            return nil;
         }
         // insert
         ~RBT()
