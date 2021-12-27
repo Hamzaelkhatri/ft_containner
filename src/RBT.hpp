@@ -95,7 +95,7 @@ namespace ft
         RBT_iter &operator=(const RBT_iter<OthTree, OthIter, U> &_other)
         {
             this->it = _other.base();
-            this->rbt_ = _other.getTree();
+            this->rbt_ = _other.get_rbt();
             return (*this);
         }
 
@@ -111,14 +111,14 @@ namespace ft
 
         RBT_iter &operator++()
         {
-            ++it;
+            it = rbt_->successor(it);
             return *this;
         }
 
         RBT_iter operator++(int)
         {
-            RBT_iter tmp = *this;
-            ++it;
+            RBT_iter tmp(*this);
+            it = rbt_->successor(it);
             return tmp;
         }
 
@@ -132,26 +132,26 @@ namespace ft
 
         RBT_iter &operator--()
         {
-            --it;
+            it = rbt_->predecessor(it);
             return *this;
         }
 
         RBT_iter operator--(int)
         {
-            RBT_iter tmp = *this;
-            --it;
+            RBT_iter tmp(*this);
+            it = rbt_->predecessor(it);
             return tmp;
         }
 
-        // bool operator==(const RBT_iter &rbt_iter) const
-        // {
-        //     return it == rbt_iter.it;
-        // }
+        bool operator==(const RBT_iter &rbt_iter) const
+        {
+            return it == rbt_iter.it;
+        }
 
-        // bool operator!=(const RBT_iter &rbt_iter) const
-        // {
-        //     return it != rbt_iter.it;
-        // }
+        bool operator!=(const RBT_iter &rbt_iter) const
+        {
+            return it != rbt_iter.it;
+        }
 
         iterator_type get_iterator() const
         {
@@ -164,9 +164,9 @@ namespace ft
         }
     };
 
-    template <class T,                          // map::mapped_type
-              class Compare,                    // map::key_compare
-              class Alloc = std::allocator<T> > // map::allocator_type
+    template <class T,                         // map::mapped_type
+              class Compare,                   // map::key_compare
+              class Alloc = std::allocator<T>> // map::allocator_type
     class RBT
     {
 
@@ -187,7 +187,7 @@ namespace ft
         typedef ft::reverse_iterator<iterator> reverse_iterator;
         typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    private:
+    public:
         Node_ *root;
         Node_ *end;
         Node_ *nil;
@@ -198,7 +198,7 @@ namespace ft
 
         Node_ *grandparent(Node_ *n)
         {
-            if (n == NULL || n->parent == NULL || n == nil || n->parent == nil)
+            if (n == NULL || n->parent == NULL || n == nil || n->parent == end)
                 return nil;
             return n->parent->parent;
         }
@@ -230,7 +230,7 @@ namespace ft
             if (r->left != nil)
                 r->left->parent = n;
             r->parent = n->parent;
-            if (n->parent == NULL)
+            if (n->parent == end)
                 root = r;
             else if (n == n->parent->left)
                 n->parent->left = r;
@@ -399,7 +399,8 @@ namespace ft
             n->height = 1;
             n->left = n->right = nil;
             insertFixup(n);
-            root->parent = NULL;
+            root->parent = end;
+            end->left = root;
         }
 
         void printTree(Node_ *n)
@@ -434,7 +435,7 @@ namespace ft
         // transplant
         void transplant(Node_ *u, Node_ *v)
         {
-            if (!u->parent)
+            if (!u->parent || u->parent == end)
                 root = v;
             else if (u == u->parent->left)
                 u->parent->left = v;
@@ -447,7 +448,7 @@ namespace ft
         // treeMinimum
         Node_ *treeMinimum(Node_ *n)
         {
-            while (n->left != nil)
+            while (n->left != nil && n->left != NULL)
                 n = n->left;
             return n;
         }
@@ -532,16 +533,18 @@ namespace ft
             // use alloc to allocate memory for the root node
             nil = alloc.allocate(1);
             nil->color = BLACK;
-            nil->left = NULL;
             nil->right = NULL;
             root = nil;
             height = 1;
             end = alloc.allocate(1);
-            end->left = end;
+            end->left = root;
             end->right = end;
             end->parent = end;
             end->color = BLACK;
             end->height = 1;
+            root->parent = end;
+            end->left = root;
+            nil->left = root;
         }
         RBT(const RBT<value_type, Compare> &rhs)
         {
@@ -551,13 +554,14 @@ namespace ft
             root->left = nil;
             root->right = nil;
             size = 0;
-            root->parent = NULL;
             end = alloc.allocate(1);
             end->left = nil;
             end->right = nil;
             end->parent = NULL;
             end->color = RED;
             end->height = 1;
+            root->parent = end;
+            end->left = root;
             end->_data.first = std::numeric_limits<int>::max();
             *this = rhs;
         }
@@ -711,19 +715,13 @@ namespace ft
         // begin
         iterator begin()
         {
-            Node_ *n = root;
-            while (n->left != nil)
-                n = n->left;
-            return iterator(n, this);
+            return iterator(treeMinimum(root), this);
         }
 
         // end
         iterator _end_()
         {
-            Node_ *n = root;
-            while (n->right != nil)
-                n = n->right;
-            return iterator(n, this);
+            return iterator(end, this);
         }
 
         // find
@@ -779,6 +777,39 @@ namespace ft
         {
             Node_ *n = search(key);
             return iterator(n, this);
+        }
+
+        Node_ *successor(Node_ *n)
+        {
+            if (n->right != nil)
+                return treeMinimum(n->right);
+            Node_ *tmp = n->parent;
+            while (tmp != nil && tmp != end && n == tmp->right)
+            {
+                n = tmp;
+                tmp = tmp->parent;
+            }
+            return (tmp);
+        }
+
+        Node_ *treeMaximum(Node_ *n)
+        {
+            while (n->right != nil)
+                n = n->right;
+            return n;
+        }
+
+        Node_ *predecessor(Node_ *n)
+        {
+            if (n->left != end && n->left != nil)
+                return treeMaximum(n->left);
+            Node_ *tmp = n->parent;
+            while (n == tmp->left && tmp != end)
+            {
+                n = tmp;
+                tmp = tmp->parent;
+            }
+            return (tmp);
         }
     };
 }
