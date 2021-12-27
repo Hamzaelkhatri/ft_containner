@@ -13,29 +13,36 @@ namespace ft
     template <class Key,
               class T,
               class Compare = std::less<Key>,
-              class Alloc = std::allocator<ft::pair<const Key, T>>>
+              class Alloc = std::allocator<ft::pair<const Key, T> > >
     class map
     {
-    private:
-        ft::RBT<Key, T, Compare, Alloc> _tree;
-        ft::RBT<Key, T, Compare, Alloc> _root;
-        Compare _comp;
-        Alloc _alloc;
 
     public:
-        typedef Key key_type;
+        typedef Key key;
         typedef T mapped_type;
-        typedef std::pair<const key_type, mapped_type> value_type;
+        typedef std::pair<const key, mapped_type> value_type;
         typedef Compare key_compare;
-        typedef typename ft::Node<key_type, mapped_type> node;
-        typedef typename Alloc::template rebind<node>::other allocator_type;
+        typedef Alloc allocator_type;
         typedef typename allocator_type::reference reference;
         typedef typename allocator_type::const_reference const_reference;
         typedef typename allocator_type::pointer pointer;
         typedef typename allocator_type::const_pointer const_pointer;
-        typedef ft::RBT<pointer, value_type> iterator;
-        typedef ft::RBT<pointer, const value_type> const_iterator;
-        typedef ft::reverse_iterator<iterator> reverse_iterator;
+        typedef RBT<key, mapped_type, Compare, Alloc> tree_type;
+        typedef typename tree_type::iterator iterator;
+        typedef typename tree_type::const_iterator const_iterator;
+        typedef typename tree_type::reverse_iterator reverse_iterator;
+        typedef typename tree_type::const_reverse_iterator const_reverse_iterator;
+        typedef typename tree_type::difference_type difference_type;
+        typedef typename ft::Node<key, mapped_type> Node;
+        typedef ft::Node<key, mapped_type> *NodePtr;
+        typedef size_t size_type;
+
+    private:
+        tree_type _tree;
+        allocator_type _alloc;
+        key_compare _comp;
+
+    public:
         class value_compare
         {
         protected:
@@ -51,9 +58,6 @@ namespace ft
                 return _comp(x.first, y.first);
             }
         };
-        typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
-        typedef std::ptrdiff_t difference_type;
-        typedef size_t size_type;
 
         // constructors
         explicit map(const key_compare &comp = key_compare(),
