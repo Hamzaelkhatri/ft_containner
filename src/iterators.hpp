@@ -141,6 +141,12 @@ namespace ft
         {
             return *(*this + n);
         }
+
+        // ->
+        pointer operator->() const
+        {
+            return &(operator*());
+        }
     };
     // Non-member function overloads
     template <class Iterator>

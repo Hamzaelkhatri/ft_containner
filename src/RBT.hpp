@@ -184,8 +184,8 @@ namespace ft
         typedef RBT *self;
         typedef ft::RBT_iter<self, Node_, pointer> iterator;
         typedef ft::RBT_iter<self, Node_, pointer> const_iterator;
-        typedef ft::reverse_iterator<iterator> reverse_iterator;
-        typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+        typedef typename ft::reverse_iterator<iterator> reverse_iterator;
+        typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
     public:
         Node_ *root;
@@ -448,7 +448,7 @@ namespace ft
         // treeMinimum
         Node_ *treeMinimum(Node_ *n)
         {
-            while (n->left != nil && n->left != NULL)
+            while (n && n->left != nil && n->left != NULL)
                 n = n->left;
             return n;
         }
@@ -763,20 +763,11 @@ namespace ft
             return size == 0;
         }
 
-        // begin
-        iterator begin() const
-        {
-            Node_ *n = root;
-            while (n->left != nil)
-                n = n->left;
-            return iterator(n, this);
-        }
-
-        // end
-        iterator find(T key) const
+        // find
+        const_iterator find(T key) const
         {
             Node_ *n = search(key);
-            return iterator(n, this);
+            return const_iterator(n, this);
         }
 
         Node_ *successor(Node_ *n)
@@ -811,6 +802,120 @@ namespace ft
             }
             return (tmp);
         }
+
+        //rbegin
+        reverse_iterator rbegin()
+        {
+            return reverse_iterator(_end_());
+        }
+
+        //rend
+        reverse_iterator rend()
+        {
+            return reverse_iterator(begin());
+        }
+
+        // begin
+        const_iterator begin() const
+        {
+            Node_ *n = root;
+            while (n->left != nil)
+                n = n->left;
+            return const_iterator(n, this);
+        }
+
+        // end
+        const_iterator _end_() const
+        {
+            return const_iterator(end, this);
+        }
+
+        // rbegin const
+        const_reverse_iterator rbegin() const
+        {
+            return const_reverse_iterator(_end_());
+        }
+
+        // rend const
+        const_reverse_iterator rend() const
+        {
+            return const_reverse_iterator(begin());
+        }
+
+        //upper_bound
+        iterator upper_bound(T key)
+        {
+            Node_ *n = root;
+            while (n != nil && n->_data.first != key.first)
+            {
+                if (n->_data.first > key.first)
+                    n = n->left;
+                else
+                    n = n->right;
+            }
+            // if (n == nil)
+            //     return iterator(end, this);;
+            return iterator(n->parent, this);
+        }
+
+        // lower_bound
+        iterator lower_bound(T key)
+        {
+            Node_ *n = root;
+            while (n != nil && n->_data.first != key.first)
+            {
+                if (n->_data.first > key.first)
+                    n = n->left;
+                else
+                    n = n->right;
+            }
+            return iterator(n, this);
+        }
+
+        //at
+        T &at(T key)
+        {
+            Node_ *n = search(key);
+            if (n == nil)
+                throw std::out_of_range("out of range");
+            return n->_data.second;
+        }
+
+        //at
+        const T &at(T key) const
+        {
+            Node_ *n = search(key);
+            if (n == nil)
+                throw std::out_of_range("out of range");
+            return n->_data.second;
+        }
+
+        //at
+        T &operator[](T key)
+        {
+            Node_ *n = search(key);
+            if (n == nil)
+                throw std::out_of_range("out of range");
+            return n->_data.second;
+        }
+
+        //at
+        const T &operator[](T key) const
+        {
+            Node_ *n = search(key);
+            if (n == nil)
+                throw std::out_of_range("out of range");
+            return n->_data.second;
+        }
+
+        //at
+        T &at(iterator it)
+        {
+            return it.node->_data.second;
+        }
+
+        
+
     };
 }
 #endif // RBT_HPP∂
