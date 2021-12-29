@@ -177,20 +177,21 @@ namespace ft
         pair(const pair<U, V> &pr) : first(pr.first), second(pr.second)
         {
         }
-        pair(const first_type &a, const second_type &b) : first(a), second(b)
+        
+        pair(const T1 &a, const T2 &b): first(a), second(b)
         {
         }
         // implicit declaration of copy constructor
         pair &operator=(const pair &pr)
         {
-            first = pr.first;
-            second = pr.second;
+            first=pr.first;
+             second=pr.second;
             return *this;
         }
     };
     // create my own std::make_pair
     template <class T1, class T2>
-    pair<T1, T2> make_pair(const T1 &a, const T2 &b)
+    pair<T1, T2> make_pair(T1 a, T2 b)
     {
         return pair<T1, T2>(a, b);
     }

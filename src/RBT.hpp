@@ -123,12 +123,12 @@ namespace ft
         }
 
         // <<
-        template <class OthTree, class OthIter, class U>
-        friend std::ostream &operator<<(std::ostream &_os, const RBT_iter<OthTree, OthIter, U> &_other)
-        {
-            _os << _other.it->_data;
-            return _os;
-        }
+        // template <class OthTree, class OthIter, class U>
+        // friend std::ostream &operator<<(std::ostream &_os, const RBT_iter<OthTree, OthIter, U> &_other)
+        // {
+        //     _os << _other.it->_data;
+        //     return _os;
+        // }
 
         RBT_iter &operator--()
         {
@@ -359,6 +359,7 @@ namespace ft
             return count + 1;
         }
 
+
         int cout_right_height()
         {
             int count = 0;
@@ -588,6 +589,7 @@ namespace ft
                 return;
             Node_ *n = alloc.allocate(1);
             n->_data = pair;
+            // n->_data = pair;
             insert(n);
             size++;
         }
@@ -746,12 +748,6 @@ namespace ft
                     n = n->right;
             }
             return iterator(nil, this);
-        }
-
-        // erase
-        void erase(iterator it)
-        {
-            deleteNode(it.node->_data);
         }
 
         // erase
@@ -958,6 +954,21 @@ namespace ft
         size_t max_size() const
         {
             return alloc.max_size();
+        }
+
+        // erase
+        void erase(iterator first, iterator last)
+        {
+            while (first != last)
+            {
+                erase(first++);
+            }
+        }
+
+        // erase with iterator
+        void erase(iterator it)
+        {
+            deleteNode(it.node);
         }
 
     };
