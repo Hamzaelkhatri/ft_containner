@@ -178,7 +178,7 @@ namespace ft
         typedef typename Alloc::const_pointer const_node_pointer;
         typedef typename Alloc::reference node_reference;
         typedef typename Alloc::const_reference const_node_reference;
-        typedef typename Alloc::size_type size_type;
+        size_t size_type;
         typedef typename Alloc::difference_type difference_type;
         typedef struct Node<value_type> *NodePtr;
         typedef RBT *self;
@@ -275,10 +275,13 @@ namespace ft
 
         void makeEmpty(Node_ *n)
         {
-            if (n == nil)
+            if (n == nil || n == end || n == NULL)
                 return;
-            makeEmpty(n->left);
-            makeEmpty(n->right);
+            // makeEmpty(n->left);
+            // makeEmpty(n->right);
+            //  if (n == nil || n == end || n == NULL)
+            //     return;
+            // alloc.destroy(n);
             alloc.destroy(n);
         }
 
@@ -541,6 +544,7 @@ namespace ft
             end->right = end;
             end->parent = end;
             end->color = BLACK;
+            size = 0;
             end->height = 1;
             root->parent = end;
             end->left = root;
@@ -573,15 +577,17 @@ namespace ft
             n->value = value;
             // alloc.construct(n->value);
             insert(n);
+            size++;
         }
 
         // insert using pair with enable if you want to use pair
         void insert_(value_type pair)
         {
             // use allocator for rebind to use custom allocator
+            if(search(pair) != end && search(pair) != nil)
+                return;
             Node_ *n = alloc.allocate(1);
             n->_data = pair;
-
             insert(n);
             size++;
         }
@@ -678,6 +684,7 @@ namespace ft
             }
             if (root != nil && root)
                 root->color = BLACK;
+            size--;
         }
 
         // size
@@ -709,7 +716,8 @@ namespace ft
         // insert
         ~RBT()
         {
-            makeEmpty();
+            // if (root)
+                // makeEmpty();
         }
 
         // begin
@@ -853,8 +861,6 @@ namespace ft
                 else
                     n = n->right;
             }
-            // if (n == nil)
-            //     return iterator(end, this);;
             return iterator(n->parent, this);
         }
 
@@ -878,7 +884,7 @@ namespace ft
             Node_ *n = search(key);
             if (n == nil)
                 throw std::out_of_range("out of range");
-            return n->_data.second;
+            return n->_data;
         }
 
         //at
@@ -887,7 +893,7 @@ namespace ft
             Node_ *n = search(key);
             if (n == nil)
                 throw std::out_of_range("out of range");
-            return n->_data.second;
+            return n->_data;
         }
 
         //at
@@ -896,7 +902,7 @@ namespace ft
             Node_ *n = search(key);
             if (n == nil)
                 throw std::out_of_range("out of range");
-            return n->_data.second;
+            return n->_data;
         }
 
         //at
@@ -905,17 +911,55 @@ namespace ft
             Node_ *n = search(key);
             if (n == nil)
                 throw std::out_of_range("out of range");
-            return n->_data.second;
+            return n->_data;
         }
 
         //at
         T &at(iterator it)
         {
-            return it.node->_data.second;
+            return it.node->_data;
         }
 
-        
+        //swap
+        void swap(RBT &other)
+        {
+            ft::swap(root, other.root);
+            ft::swap(nil, other.nil);
+            ft::swap(end, other.end);
+            ft::swap(size, other.size);
+        }
+
+        //equal_range
+        ft::pair<iterator, iterator> equal_range(T key)
+        {
+            iterator first = lower_bound(key);
+            iterator last = upper_bound(key);
+            return ft::make_pair(first, last);
+        }
+
+        //equal_range
+        ft::pair<const_iterator, const_iterator> equal_range(T key) const
+        {
+            const_iterator first = lower_bound(key);
+            const_iterator last = upper_bound(key);
+            return ft::make_pair(first, last);
+        }
+
+        //count 
+        size_t count(T key) const
+        {
+            const_iterator it = find(key);
+            if (it == end)
+                return 0;
+            return 1;
+        }
+
+        //max_size
+        size_t max_size() const
+        {
+            return alloc.max_size();
+        }
 
     };
 }
-#endif // RBT_HPP∂
+#endif

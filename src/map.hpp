@@ -20,7 +20,7 @@ namespace ft
     public:
         typedef Key key;
         typedef T mapped_type;
-        typedef std::pair<const key, mapped_type> value_type;
+        typedef ft::pair<const key, mapped_type> value_type;
         typedef Compare key_compare;
         typedef Alloc allocator_type;
         typedef typename allocator_type::reference reference;
