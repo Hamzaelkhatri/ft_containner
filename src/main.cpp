@@ -18,12 +18,11 @@ int main()
     ft::map<int, std::string> tree;
 
     tree.insert(ft::pair<int, std::string>(1, "james"));
+    tree.insert(ft::pair<int, std::string>(1, "james"));
     tree.insert(ft::make_pair(2, "two"));
     tree.insert(ft::make_pair(3, "three"));
     tree.insert(ft::make_pair(4, "four"));
     tree.insert(ft::make_pair(5, "five"));
-
-    std::cout << tree.find(1)->second << std::endl;
 
     std::map<int, std::string> map;
     map.insert(std::make_pair(1, "one"));

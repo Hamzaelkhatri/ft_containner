@@ -359,7 +359,6 @@ namespace ft
             return count + 1;
         }
 
-
         int cout_right_height()
         {
             int count = 0;
@@ -585,7 +584,7 @@ namespace ft
         void insert_(value_type pair)
         {
             // use allocator for rebind to use custom allocator
-            if(search(pair) != end && search(pair) != nil)
+            if (search(pair) != end && search(pair) != nil)
                 return;
             Node_ *n = alloc.allocate(1);
             n->_data = pair;
@@ -621,20 +620,20 @@ namespace ft
         }
 
         // search
-        Node_ *search(T key)
-        {
-            Node_ *n = root;
-            while (n != nil)
-            {
-                if (comp(key.first, n->_data.first))
-                    n = n->left;
-                else if (comp(n->_data.first, key.first))
-                    n = n->right;
-                else
-                    return n;
-            }
-            return nil;
-        }
+        // Node_ *search(T key)
+        // {
+        //     Node_ *n = root;
+        //     while (n != nil)
+        //     {
+        //         if (comp(key.first, n->_data.first))
+        //             n = n->left;
+        //         else if (comp(n->_data.first, key.first))
+        //             n = n->right;
+        //         else
+        //             return n;
+        //     }
+        //     return nil;
+        // }
         // delete node
         void
         deleteNode(value_type key)
@@ -698,33 +697,48 @@ namespace ft
 
         // height
 
-        Node_ *search(value_type key, Compare &value)
+        Node_ *search(T key) const
         {
             Node_ *n = root;
             while (n != nil)
             {
-                if (n->_data.first == key)
-                {
-                    value = n->value;
+                if (n->_data.first == key.first)
                     return n;
-                }
-                else if (n->_data.first > key)
+                else if (n->_data.first > key.first)
                     n = n->left;
                 else
                     n = n->right;
             }
             return nil;
         }
+
+        Node_ *csearch(const value_type& key) const
+        {
+            Node_ *n = root;
+            while (n != nil)
+            {
+                if (n->_data.first == key.first)
+                    return n;
+                else if (n->_data.first > key.first)
+                    n = n->left;
+                else
+                    n = n->right;
+            }
+            return nil;
+        }
+
         // insert
         ~RBT()
         {
             // if (root)
-                // makeEmpty();
+            // makeEmpty();
         }
 
         // begin
         iterator begin()
         {
+            if(root == end || root == nil || root == NULL)
+                return _end_();
             return iterator(treeMinimum(root), this);
         }
 
@@ -738,16 +752,20 @@ namespace ft
         iterator find(T key)
         {
             Node_ *n = root;
+            Node_ *ret = end;
             while (n != nil)
             {
-                if (n->_data.first == key.first)
-                    return iterator(n, this);
-                else if (n->_data.first > key.first)
+                if (comp(n->_data.first, key.first))
                     n = n->left;
-                else
+                else if (comp(key.first, n->_data.first))
                     n = n->right;
+                else
+                {
+                    ret = n;
+                    break;
+                }
             }
-            return iterator(nil, this);
+            return iterator(ret, this);
         }
 
         // erase
@@ -768,9 +786,9 @@ namespace ft
         }
 
         // find
-        const_iterator find(T key) const
+        const_iterator find (const value_type& k) const
         {
-            Node_ *n = search(key);
+            Node_ *n = csearch(k);
             return const_iterator(n, this);
         }
 
@@ -941,11 +959,11 @@ namespace ft
             return ft::make_pair(first, last);
         }
 
-        //count 
+        //count
         size_t count(T key) const
         {
-            const_iterator it = find(key);
-            if (it == end)
+            Node_ *n = search(key);
+            if(n == nil)
                 return 0;
             return 1;
         }
@@ -968,9 +986,8 @@ namespace ft
         // erase with iterator
         void erase(iterator it)
         {
-            deleteNode(it.node);
+            deleteNode(it.it->_data);
         }
-
     };
 }
 #endif

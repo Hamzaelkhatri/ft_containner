@@ -13,7 +13,7 @@ namespace ft
     template <class Key,
               class T,
               class Compare = std::less<Key>,
-              class Alloc = std::allocator<ft::pair<Key, T> > >
+              class Alloc = std::allocator<ft::pair<Key, T>>>
     class map
     {
 
@@ -42,8 +42,7 @@ namespace ft
         typedef typename tree::const_reverse_iterator const_reverse_iterator;
         typedef typename tree::difference_type difference_type;
         typedef typename tree::node_allocator allocator_type;
-        
-
+        typedef Alloc _Alloc_;
 
         typedef size_t size_type;
 
@@ -84,21 +83,40 @@ namespace ft
         map(InputIterator first, InputIterator last,
             const key_compare &comp = key_compare(),
             const allocator_type &alloc = allocator_type())
-            : _tree(comp, alloc)
         {
-            _tree.insert_(ft::make_pair(first, last));
+            while (first != last)
+            {
+                _tree.insert_(ft::make_pair(first->first, first->second));
+                ++first;
+            }   
+        }
+
+        //insert
+        iterator insert(iterator position, const value_type &val)
+        {
+            _tree.insert_(position, val);
+            return (_tree.find_(val));
         }
 
         // insert
-        void insert(const value_type &x)
+        pair<iterator, bool> insert(const value_type &val)
         {
-            _tree.insert_(x);
+            if (_tree.find(val) == end())
+            {
+                _tree.insert_(val);
+                return pair<iterator, bool>(_tree.find(val), false);
+            }
+            return pair<iterator, bool>(_tree.find(val), true);
         }
 
         template <class InputIterator>
         void insert(InputIterator first, InputIterator last)
         {
-            _tree.insert_(ft::make_pair(first, last));
+            while (first != last)
+            {
+                _tree.insert_(ft::make_pair(first->first, first->second));
+                ++first;
+            }
         }
 
         void print()
@@ -109,12 +127,13 @@ namespace ft
         // erase
         void erase(iterator position)
         {
-             _tree.erase(position);
+            _tree.erase(position);
         }
 
         size_type erase(const key &x)
         {
-            return _tree.erase(ft::pair<key, mapped_type>(x, mapped_type()));
+            _tree.erase(ft::pair<key, mapped_type>(x, mapped_type()));
+            return 0;
         }
 
         void erase(iterator first, iterator last)
@@ -128,17 +147,16 @@ namespace ft
             return _tree.find(ft::pair<key, mapped_type>(x, mapped_type()));
         }
 
-
         // size
         size_type size() const
         {
-            return _tree.size();
+            return _tree.size;
         }
 
         // empty
         bool empty() const
         {
-            return _tree.empty();
+            return _tree.size == 0;
         }
 
         // swap
@@ -162,7 +180,7 @@ namespace ft
         // value_comp
         value_compare value_comp() const
         {
-            return value_compare(_comp);
+            return _comp;
         }
 
         // operator[]
@@ -272,8 +290,7 @@ namespace ft
         {
             return _alloc;
         }
-        
-        
+
         // operator=
         map &operator=(const map &other)
         {
@@ -283,6 +300,11 @@ namespace ft
             return *this;
         }
 
+        //max size
+        size_t max_size()
+        {
+            return _alloc.max_size();
+        }
     };
 };
 #endif
