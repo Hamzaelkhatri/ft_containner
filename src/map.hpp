@@ -13,14 +13,14 @@ namespace ft
     template <class Key,
               class T,
               class Compare = std::less<Key>,
-              class Alloc = std::allocator<ft::pair<Key, T>>>
+              class Alloc = std::allocator<ft::pair<const Key, T> > >
     class map
     {
 
     public:
         typedef Key key;
         typedef T mapped_type;
-        typedef ft::pair<key, mapped_type> value_type;
+        typedef ft::pair<const key, mapped_type> value_type;
         typedef Compare key_compare;
         // typedef Alloc allocator_type;
         // typedef typename allocator_type::reference reference;
@@ -41,14 +41,14 @@ namespace ft
         typedef typename tree::reverse_iterator reverse_iterator;
         typedef typename tree::const_reverse_iterator const_reverse_iterator;
         typedef typename tree::difference_type difference_type;
-        typedef typename tree::node_allocator allocator_type;
+        typedef Alloc allocator_type;
         typedef Alloc _Alloc_;
-
         typedef size_t size_type;
+        allocator_type _alloc;
 
     private:
         tree _tree;
-        allocator_type _alloc;
+        _Alloc_ _alloc_;
         key_compare _comp;
 
     public:
@@ -70,42 +70,43 @@ namespace ft
 
         // constructors
         explicit map(const key_compare &comp = key_compare(),
-                     const allocator_type &alloc = allocator_type()) : _comp(comp), _alloc(alloc)
+                     const allocator_type &alloc = allocator_type()) : _comp(comp), _alloc_(alloc), _tree()
         {
         }
         map(const map &other)
         {
             _comp = other._comp;
-            _alloc = other._alloc;
+            _alloc_ = other._alloc_;
             _tree = other._tree;
         }
         template <class InputIterator>
         map(InputIterator first, InputIterator last,
             const key_compare &comp = key_compare(),
-            const allocator_type &alloc = allocator_type())
+            const allocator_type &alloc = allocator_type()) : _tree()
         {
             while (first != last)
             {
                 _tree.insert_(ft::make_pair(first->first, first->second));
                 ++first;
-            }   
+            }
         }
 
-        //insert
+        // insert
         iterator insert(iterator position, const value_type &val)
         {
-            _tree.insert_(position, val);
+            _tree.insert_(val);
             return (_tree.find_(val));
         }
 
         // insert
         pair<iterator, bool> insert(const value_type &val)
         {
-            if (_tree.find(val) == end())
+            // if (_tree.find(val) == end())
             {
                 _tree.insert_(val);
                 return pair<iterator, bool>(_tree.find(val), false);
             }
+
             return pair<iterator, bool>(_tree.find(val), true);
         }
 
@@ -138,7 +139,11 @@ namespace ft
 
         void erase(iterator first, iterator last)
         {
-            _tree.erase(first, last);
+            while (first != last)
+            {
+                _tree.erase(first);
+                ++first;
+            }
         }
 
         // find
@@ -156,7 +161,7 @@ namespace ft
         // empty
         bool empty() const
         {
-            return _tree.size == 0;
+            return false;
         }
 
         // swap
@@ -246,7 +251,9 @@ namespace ft
         // count
         size_type count(const key &x) const
         {
-            return _tree.count(ft::pair<key, mapped_type>(x, mapped_type()));
+            if( _tree.count(ft::pair<key, mapped_type>(x, mapped_type())) == 0)
+                return 0;
+            return 1;
         }
 
         // lower_bound
@@ -286,24 +293,24 @@ namespace ft
         }
 
         // allocator
-        allocator_type get_allocator() const
+        _Alloc_ get_allocator() const
         {
-            return _alloc;
+            return _alloc_;
         }
 
         // operator=
         map &operator=(const map &other)
         {
             _comp = other._comp;
-            _alloc = other._alloc;
+            _alloc_ = other._alloc_;
             _tree = other._tree;
             return *this;
         }
 
-        //max size
+        // max size
         size_t max_size()
         {
-            return _alloc.max_size();
+            return _alloc_.max_size();
         }
     };
 };

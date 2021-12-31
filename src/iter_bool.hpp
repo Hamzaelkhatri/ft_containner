@@ -177,15 +177,14 @@ namespace ft
         pair(const pair<U, V> &pr) : first(pr.first), second(pr.second)
         {
         }
-        
-        pair(const T1 &a, const T2 &b): first(a), second(b)
+
+        pair(const T1 &a, const T2 &b) : first(a), second(b)
         {
         }
         // implicit declaration of copy constructor
         pair &operator=(const pair &pr)
         {
-            first=pr.first;
-             second=pr.second;
+            new (this) pair<T1, T2>(pr);
             return *this;
         }
     };

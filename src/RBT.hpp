@@ -95,7 +95,7 @@ namespace ft
         RBT_iter &operator=(const RBT_iter<OthTree, OthIter, U> &_other)
         {
             this->it = _other.base();
-            this->rbt_ = _other.get_rbt();
+            this->rbt_ = _other.getTree();
             return (*this);
         }
 
@@ -117,12 +117,12 @@ namespace ft
 
         RBT_iter operator++(int)
         {
-            RBT_iter tmp(*this);
-            it = rbt_->successor(it);
+            RBT_iter tmp = *this;
+            rbt_->successor(it);
             return tmp;
         }
 
-        // <<
+        // // <<
         // template <class OthTree, class OthIter, class U>
         // friend std::ostream &operator<<(std::ostream &_os, const RBT_iter<OthTree, OthIter, U> &_other)
         // {
@@ -138,8 +138,8 @@ namespace ft
 
         RBT_iter operator--(int)
         {
-            RBT_iter tmp(*this);
-            it = rbt_->predecessor(it);
+            RBT_iter tmp = *this;
+            rbt_->predecessor(it);
             return tmp;
         }
 
@@ -164,9 +164,9 @@ namespace ft
         }
     };
 
-    template <class T,                         // map::mapped_type
-              class Compare,                   // map::key_compare
-              class Alloc = std::allocator<T>> // map::allocator_type
+    template <class T,                          // map::mapped_type
+              class Compare,                    // map::key_compare
+              class Alloc = std::allocator<T> > // map::allocator_type
     class RBT
     {
 
@@ -178,27 +178,27 @@ namespace ft
         typedef typename Alloc::const_pointer const_node_pointer;
         typedef typename Alloc::reference node_reference;
         typedef typename Alloc::const_reference const_node_reference;
-        size_t size_type;
+        typedef typename Alloc::size_type size_type;
         typedef typename Alloc::difference_type difference_type;
         typedef struct Node<value_type> *NodePtr;
         typedef RBT *self;
+        int size;
         typedef ft::RBT_iter<self, Node_, pointer> iterator;
         typedef ft::RBT_iter<self, Node_, pointer> const_iterator;
-        typedef typename ft::reverse_iterator<iterator> reverse_iterator;
-        typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
+        typedef ft::reverse_iterator<iterator> reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    public:
+    private:
         Node_ *root;
         Node_ *end;
         Node_ *nil;
-        int size;
         node_allocator alloc;
         int height;
         Compare comp;
 
         Node_ *grandparent(Node_ *n)
         {
-            if (n == NULL || n->parent == NULL || n == nil || n->parent == end)
+            if (n == NULL || n->parent == NULL || n == nil || n->parent == nil)
                 return nil;
             return n->parent->parent;
         }
@@ -223,33 +223,15 @@ namespace ft
             n->height = (hl > hr ? hl : hr) + 1;
         }
 
-        void rotateLeft(Node_ *n)
+         void rotateRight(Node_ *n)
         {
-            Node_ *r = n->right;
-            n->right = r->left;
-            if (r->left != nil)
-                r->left->parent = n;
-            r->parent = n->parent;
-            if (n->parent == end)
-                root = r;
-            else if (n == n->parent->left)
-                n->parent->left = r;
-            else
-                n->parent->right = r;
-            r->left = n;
-            n->parent = r;
-            updateHeight(n);
-            updateHeight(r);
-        }
 
-        void rotateRight(Node_ *n)
-        {
             Node_ *l = n->left;
             n->left = l->right;
             if (l->right != nil)
                 l->right->parent = n;
             l->parent = n->parent;
-            if (n->parent == NULL)
+            if (n->parent == nil || n->parent == end)
                 root = l;
             else if (n == n->parent->left)
                 n->parent->left = l;
@@ -257,8 +239,23 @@ namespace ft
                 n->parent->right = l;
             l->right = n;
             n->parent = l;
-            updateHeight(n);
-            updateHeight(l);
+        }
+
+        void rotateLeft(Node_ *n)
+        {
+            Node_ *r = n->right;
+            n->right = r->left;
+            if (r->left != nil)
+                r->left->parent = n;
+            r->parent = n->parent;
+            if (n->parent == nil || n->parent == end)
+                root = r;
+            else if (n == n->parent->left)
+                n->parent->left = r;
+            else
+                n->parent->right = r;
+            r->left = n;
+            n->parent = r;
         }
 
         void doublerotateLeft(Node_ *n)
@@ -275,13 +272,10 @@ namespace ft
 
         void makeEmpty(Node_ *n)
         {
-            if (n == nil || n == end || n == NULL)
+            if (n == nil)
                 return;
-            // makeEmpty(n->left);
-            // makeEmpty(n->right);
-            //  if (n == nil || n == end || n == NULL)
-            //     return;
-            // alloc.destroy(n);
+            makeEmpty(n->left);
+            makeEmpty(n->right);
             alloc.destroy(n);
         }
 
@@ -292,57 +286,60 @@ namespace ft
 
         // insertFixup
         void
-        insertFixup(Node_ *n)
+        insertFixup(Node_ *_node)
         {
-            while (n && n != root && n->parent->color == RED)
+           Node_ *tmp;
+            while (_node->parent->color == RED)
             {
-                if (n->parent == n->parent->parent->left)
+                if (_node->parent == _node->parent->parent->right)
                 {
-                    Node_ *u = n->parent->parent->right;
-                    if (u && u->color == RED)
+                    tmp = _node->parent->parent->left;
+                    if (tmp && tmp->color == RED)
                     {
-                        n->parent->color = BLACK;
-                        u->color = RED;
-                        n->parent->parent->color = RED;
-                        n = n->parent->parent;
+                        tmp->color = BLACK;
+                        _node->parent->color = BLACK;
+                        _node->parent->parent->color = RED;
+                        _node = _node->parent->parent;
                     }
                     else
                     {
-                        if (n == n->parent->right)
+                        if (_node == _node->parent->left)
                         {
-                            n = n->parent;
-                            rotateLeft(n);
+                            _node = _node->parent;
+                            rotateRight(_node);
                         }
-                        n->parent->color = BLACK;
-                        n->parent->parent->color = RED;
-                        rotateRight(n->parent->parent);
+                        _node->parent->color = BLACK;
+                        _node->parent->parent->color = RED;
+                        rotateLeft(_node->parent->parent);
                     }
                 }
                 else
                 {
-                    Node_ *u = n->parent->parent->left; // uncle
-                    // check if Node_ is not empty
-                    if (u && u->color == RED)
+                    tmp = _node->parent->parent->right;
+                    if (tmp && tmp->color == RED)
                     {
-                        n->parent->color = BLACK;
-                        u->color = BLACK;
-                        n->parent->parent->color = RED;
-                        n = n->parent->parent;
+                        tmp->color = BLACK;
+                        _node->parent->color = BLACK;
+                        _node->parent->parent->color = RED;
+                        _node = _node->parent->parent;
                     }
                     else
                     {
-                        if (n == n->parent->left)
+                        if (_node == _node->parent->right)
                         {
-                            n = n->parent;
-                            rotateRight(n);
+                            _node = _node->parent;
+                            rotateLeft(_node);
                         }
-                        n->parent->color = BLACK;
-                        n->parent->parent->color = RED;
-                        rotateLeft(n->parent->parent);
+                        _node->parent->color = BLACK;
+                        _node->parent->parent->color = RED;
+                        rotateRight(_node->parent->parent);
                     }
                 }
+                if (_node == root)
+                    break;
             }
-            root->color = BLACK;
+            root->color = BLACK; // root is always black
+            root->parent = end;
         }
 
         int cout_left_height()
@@ -372,39 +369,48 @@ namespace ft
             return count + 1;
         }
 
-        void insert(Node_ *n) // 1 ---->
+       void insert(T data)
         {
-            Node_ *y = nil;
-            Node_ *x = root;
-
-            while (x != nil)
+            if (root == nil)
             {
-                y = x;
-                if (comp(n->_data.first, x->_data.first))
-                    x = x->left;
-                else
-                    x = x->right;
-            }
-            n->parent = y;
-            if (y == nil)
-            {
-                root = n;
-                n->color = BLACK;
+                root = alloc.allocate(1);
+                root->color = BLACK;
+                root->_data = data;
+                root->left = nil;
+                root->right = nil;
+                root->parent = end;
+                size++;
             }
             else
             {
-                if (comp(n->_data.first, x->_data.first) == true)
-                    y->left = n;
-                else
-                    y->right = n;
-                n->color = RED;
+                Node_ *tmp = this->root;
+                Node_ *tmp2 = nil;
+                Node_ *_new = alloc.allocate(1);
+                size++;
+                _new->_data = data;
+                _new->left = nil;
+                _new->right = nil;
+                _new->parent = end;
+                _new->color = RED;
+                while (tmp != nil)
+                {
+                    tmp2 = tmp;
+                    if (comp(data.first, tmp->_data.first))
+                        tmp = tmp->left;
+                    else if (comp(tmp->_data.first, data.first))
+                        tmp = tmp->right;
+                    else
+                        return;
+                }
+                _new->parent = tmp2;
+                if (comp(data.first, tmp2->_data.first))
+                    tmp2->left = _new;
+                else if (comp(tmp2->_data.first, data.first))
+                    tmp2->right = _new;
+                insertFixup(_new);
             }
-            n->height = 1;
-            n->left = n->right = nil;
-            insertFixup(n);
-            root->parent = end;
-            end->left = root;
         }
+
 
         void printTree(Node_ *n)
         {
@@ -412,7 +418,7 @@ namespace ft
             if (n == nil || !n)
                 return;
             printTree(n->left);
-            std::cout << "adrs of node " << n << " Key: " << n->_data.first << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "\033[0;31mROOT " : "CHILD ") << "\033[0mLeft: " << (n->left != nil ? std::to_string(n->left->_data.first) : "nil") << " Right: " << (n->right != nil ? std::to_string(n->right->_data.first) : "nil") << std::endl;
+            std::cout << "adrs of node " << n << " Key: " << n->_data.first << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == end ? "\033[0;31mROOT " : "CHILD ") << "\033[0mLeft: " << (n->left != nil ? std::to_string(n->left->_data.first) : "nil") << " Right: " << (n->right != nil ? std::to_string(n->right->_data.first) : "nil") << std::endl;
             printTree(n->right);
         }
 
@@ -423,22 +429,17 @@ namespace ft
             if (n->color == RED && ((n->left != nil && n->left->color == RED) || (n->right != nil && n->right->color == RED)))
             {
                 // print details
-                std::cout << "adrs of node " << n << " Node_: " << n->_data.first << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == NULL ? "\033[0;31mROOT\033[0m" : "CHILD ") << " Left: " << (n->left != nil ? std::to_string(n->left->_data.first) : "nil") << " Right: " << (n->right != nil ? std::to_string(n->right->_data.first) : "nil") << std::endl;
+                std::cout << "adrs of node " << n << " Node_: " << n->_data.first << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == end ? "\033[0;31mROOT\033[0m" : "CHILD ") << " Left: " << (n->left != nil ? std::to_string(n->left->_data.first) : "nil") << " Right: " << (n->right != nil ? std::to_string(n->right->_data.first) : "nil") << std::endl;
                 return 0;
             }
             return isRBProper(n->left) && isRBProper(n->right);
         }
 
-        //  deleteFixup
-        // void deleteFixup(Node_ *n)
-        // {
-        //     insertFixup(n);
-        // }
 
         // transplant
         void transplant(Node_ *u, Node_ *v)
         {
-            if (!u->parent || u->parent == end)
+            if (!u->parent)
                 root = v;
             else if (u == u->parent->left)
                 u->parent->left = v;
@@ -451,7 +452,7 @@ namespace ft
         // treeMinimum
         Node_ *treeMinimum(Node_ *n)
         {
-            while (n && n->left != nil && n->left != NULL)
+            while (n->left != nil)
                 n = n->left;
             return n;
         }
@@ -533,64 +534,49 @@ namespace ft
     public:
         RBT()
         {
-            // use alloc to allocate memory for the root node
             nil = alloc.allocate(1);
+            end = alloc.allocate(1);
+            end->right = nil;
             nil->color = BLACK;
+            nil->left = NULL;
             nil->right = NULL;
             root = nil;
-            height = 1;
-            end = alloc.allocate(1);
             end->left = root;
-            end->right = end;
             end->parent = end;
-            end->color = BLACK;
+            comp = Compare();
             size = 0;
-            end->height = 1;
-            root->parent = end;
-            end->left = root;
-            nil->left = root;
+            
         }
-        RBT(const RBT<value_type, Compare> &rhs)
-        {
-            nil = alloc.allocate(1);
-            root = nil;
-            root->color = BLACK;
-            root->left = nil;
-            root->right = nil;
-            size = 0;
-            end = alloc.allocate(1);
-            end->left = nil;
-            end->right = nil;
-            end->parent = NULL;
-            end->color = RED;
-            end->height = 1;
-            root->parent = end;
-            end->left = root;
-            end->_data.first = std::numeric_limits<int>::max();
-            *this = rhs;
-        }
+        // RBT(const RBT<value_type, Compare> &rhs)
+        // {
+        //     nil = alloc.allocate(1);
+        //     root = nil;
+        //     root->color = BLACK;
+        //     root->left = nil;
+        //     root->right = nil;
+        //     size = 0;
+            
+        //     end = alloc.allocate(1);
+        //     end->left = NULL;
+        //     end->right = NULL;
+        //     end->parent = NULL;
+        //     end->color = RED;
+        //     end->height = 1;
+        //     root->parent = end
+
+        //     *this = rhs;
+        // }
 
         void insert(value_type key, Compare value)
         {
-            Node_ *n = alloc.allocate(1);
-            n->_data.first = key;
-            n->value = value;
-            // alloc.construct(n->value);
-            insert(n);
-            size++;
+            insert(key);
         }
 
         // insert using pair with enable if you want to use pair
         void insert_(value_type pair)
         {
             // use allocator for rebind to use custom allocator
-            if (search(pair) != end && search(pair) != nil)
-                return;
-            Node_ *n = alloc.allocate(1);
-            n->_data = pair;
-            // n->_data = pair;
-            insert(n);
-            size++;
+            insert(pair);
         }
 
         void printTree()
@@ -620,20 +606,7 @@ namespace ft
         }
 
         // search
-        // Node_ *search(T key)
-        // {
-        //     Node_ *n = root;
-        //     while (n != nil)
-        //     {
-        //         if (comp(key.first, n->_data.first))
-        //             n = n->left;
-        //         else if (comp(n->_data.first, key.first))
-        //             n = n->right;
-        //         else
-        //             return n;
-        //     }
-        //     return nil;
-        // }
+       
         // delete node
         void
         deleteNode(value_type key)
@@ -685,7 +658,6 @@ namespace ft
             }
             if (root != nil && root)
                 root->color = BLACK;
-            size--;
         }
 
         // size
@@ -697,49 +669,38 @@ namespace ft
 
         // height
 
-        Node_ *search(T key) const
-        {
-            Node_ *n = root;
-            while (n != nil)
-            {
-                if (n->_data.first == key.first)
-                    return n;
-                else if (n->_data.first > key.first)
-                    n = n->left;
-                else
-                    n = n->right;
-            }
-            return nil;
-        }
-
-        Node_ *csearch(const value_type& key) const
-        {
-            Node_ *n = root;
-            while (n != nil)
-            {
-                if (n->_data.first == key.first)
-                    return n;
-                else if (n->_data.first > key.first)
-                    n = n->left;
-                else
-                    n = n->right;
-            }
-            return nil;
-        }
-
+        // Node_ *search(value_type key, Compare &value)
+        // {
+        //     Node_ *n = root;
+        //     while (n != nil)
+        //     {
+        //         if (n->_data.first == key)
+        //         {
+        //             value = n->value;
+        //             return n;
+        //         }
+        //         else if (n->_data.first > key)
+        //             n = n->left;
+        //         else
+        //             n = n->right;
+        //     }
+        //     return nil;
+        // }
         // insert
         ~RBT()
         {
-            // if (root)
-            // makeEmpty();
+            makeEmpty();
         }
 
         // begin
         iterator begin()
         {
-            if(root == end || root == nil || root == NULL)
+            Node_ *n = root;
+            if(root == nil)
                 return _end_();
-            return iterator(treeMinimum(root), this);
+            while (n->left != nil)
+                n = n->left;
+            return iterator(n, this);
         }
 
         // end
@@ -752,20 +713,23 @@ namespace ft
         iterator find(T key)
         {
             Node_ *n = root;
-            Node_ *ret = end;
             while (n != nil)
             {
-                if (comp(n->_data.first, key.first))
+                if (n->_data.first == key.first)
+                    return iterator(n, this);
+                else if (n->_data.first > key.first)
                     n = n->left;
-                else if (comp(key.first, n->_data.first))
-                    n = n->right;
                 else
-                {
-                    ret = n;
-                    break;
-                }
+                    n = n->right;
             }
-            return iterator(ret, this);
+            return iterator(nil, this);
+        }
+
+        // erase
+        void erase(iterator it)
+        {
+            std::cout << "erase" << std::endl;
+            deleteNode(it.it->_data);
         }
 
         // erase
@@ -782,212 +746,106 @@ namespace ft
         // empty
         bool empty()
         {
-            return size == 0;
+            return empty();
         }
 
-        // find
-        const_iterator find (const value_type& k) const
+        // begin
+        iterator begin() const
         {
-            Node_ *n = csearch(k);
-            return const_iterator(n, this);
+            Node_ *n = root;
+            while (n->left != nil)
+                n = n->left;
+            return iterator(n, this);
         }
 
+        // end
+        iterator find(T key) const
+        {
+            Node_ *n = search(key);
+            return iterator(n, this);
+        }
+
+        // successor
         Node_ *successor(Node_ *n)
         {
             if (n->right != nil)
                 return treeMinimum(n->right);
-            Node_ *tmp = n->parent;
-            while (tmp != nil && tmp != end && n == tmp->right)
+            Node_ *y = n->parent;
+            while (y != nil && n == y->right)
             {
-                n = tmp;
-                tmp = tmp->parent;
+                n = y;
+                y = y->parent;
             }
-            return (tmp);
+            return y;
         }
-
+         Node_ *search(T key)
+        {
+            Node_ *n = root;
+            while (n != nil)
+            {
+                if (comp(key.first, n->_data.first))
+                    n = n->left;
+                else if (comp(n->_data.first, key.first))
+                    n = n->right;
+                else
+                    return n;
+            }
+            return nil;
+        }
         Node_ *treeMaximum(Node_ *n)
         {
             while (n->right != nil)
                 n = n->right;
             return n;
         }
-
+        // predecessor
         Node_ *predecessor(Node_ *n)
         {
-            if (n->left != end && n->left != nil)
+            if (n->left != nil)
                 return treeMaximum(n->left);
-            Node_ *tmp = n->parent;
-            while (n == tmp->left && tmp != end)
+            Node_ *y = n->parent;
+            while (y != nil && n == y->left)
             {
-                n = tmp;
-                tmp = tmp->parent;
+                n = y;
+                y = y->parent;
             }
-            return (tmp);
-        }
-
-        //rbegin
-        reverse_iterator rbegin()
-        {
-            return reverse_iterator(_end_());
-        }
-
-        //rend
-        reverse_iterator rend()
-        {
-            return reverse_iterator(begin());
-        }
-
-        // begin
-        const_iterator begin() const
-        {
-            Node_ *n = root;
-            while (n->left != nil)
-                n = n->left;
-            return const_iterator(n, this);
-        }
-
-        // end
-        const_iterator _end_() const
-        {
-            return const_iterator(end, this);
-        }
-
-        // rbegin const
-        const_reverse_iterator rbegin() const
-        {
-            return const_reverse_iterator(_end_());
-        }
-
-        // rend const
-        const_reverse_iterator rend() const
-        {
-            return const_reverse_iterator(begin());
-        }
-
-        //upper_bound
-        iterator upper_bound(T key)
-        {
-            Node_ *n = root;
-            while (n != nil && n->_data.first != key.first)
-            {
-                if (n->_data.first > key.first)
-                    n = n->left;
-                else
-                    n = n->right;
-            }
-            return iterator(n->parent, this);
-        }
-
-        // lower_bound
-        iterator lower_bound(T key)
-        {
-            Node_ *n = root;
-            while (n != nil && n->_data.first != key.first)
-            {
-                if (n->_data.first > key.first)
-                    n = n->left;
-                else
-                    n = n->right;
-            }
-            return iterator(n, this);
-        }
-
-        //at
-        T &at(T key)
-        {
-            Node_ *n = search(key);
-            if (n == nil)
-                throw std::out_of_range("out of range");
-            return n->_data;
-        }
-
-        //at
-        const T &at(T key) const
-        {
-            Node_ *n = search(key);
-            if (n == nil)
-                throw std::out_of_range("out of range");
-            return n->_data;
-        }
-
-        //at
-        T &operator[](T key)
-        {
-            Node_ *n = search(key);
-            if (n == nil)
-                throw std::out_of_range("out of range");
-            return n->_data;
-        }
-
-        //at
-        const T &operator[](T key) const
-        {
-            Node_ *n = search(key);
-            if (n == nil)
-                throw std::out_of_range("out of range");
-            return n->_data;
-        }
-
-        //at
-        T &at(iterator it)
-        {
-            return it.node->_data;
-        }
-
-        //swap
-        void swap(RBT &other)
-        {
-            ft::swap(root, other.root);
-            ft::swap(nil, other.nil);
-            ft::swap(end, other.end);
-            ft::swap(size, other.size);
-        }
-
-        //equal_range
-        ft::pair<iterator, iterator> equal_range(T key)
-        {
-            iterator first = lower_bound(key);
-            iterator last = upper_bound(key);
-            return ft::make_pair(first, last);
-        }
-
-        //equal_range
-        ft::pair<const_iterator, const_iterator> equal_range(T key) const
-        {
-            const_iterator first = lower_bound(key);
-            const_iterator last = upper_bound(key);
-            return ft::make_pair(first, last);
+            return y;
         }
 
         //count
-        size_t count(T key) const
+        size_t count(const T &key) const
         {
-            Node_ *n = search(key);
-            if(n == nil)
-                return 0;
-            return 1;
-        }
-
-        //max_size
-        size_t max_size() const
-        {
-            return alloc.max_size();
-        }
-
-        // erase
-        void erase(iterator first, iterator last)
-        {
-            while (first != last)
+            Node_ *n = root;
+            int count = 0;
+            while (n != nil)
             {
-                erase(first++);
+                if (n->_data.first == key.first)
+                {
+                    count++;
+                    break;
+                }
+                else if (n->_data.first > key.first)
+                    n = n->left;
+                else
+                    n = n->right;
             }
+            return count;
         }
 
-        // erase with iterator
-        void erase(iterator it)
+        // swap
+        void swap(RBT &other)
         {
-            deleteNode(it.it->_data);
+            std::swap(root, other.root);
+            std::swap(nil, other.nil);
+            std::swap(size, other.size);
+            std::swap(comp, other.comp);
         }
+        // earse
+        // void erase(iterator it)
+        // {
+        //     deleteNode(it.node->_data);
+        // }
+        
     };
 }
-#endif
+#endif // RBT_HPP∂

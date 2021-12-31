@@ -1,8 +1,8 @@
-#include "RBT.hpp"
-#include <map>
-#include "map.hpp"
 #include <iostream>
-#include "iterators.hpp"
+#include <map>
+#include <new>
+#include "./map.hpp"
+#include <iostream>
 // #include "map."
 // define COLORS for terminal
 #define RED "\033[0;31m"
@@ -13,105 +13,353 @@
 #define CYAN "\033[0;36m"
 #define RESET "\033[0m"
 
+
+template <typename T, typename U>
+void print_namespace(ft::map<T, U> const &mp)
+{
+    mp.empty();
+    std::cout << "\nNAMESPACE : ft" << std::endl;
+}
+
+template <typename T, typename U>
+void print_namespace(std::map<T, U> const &mp)
+{
+    mp.empty();
+    std::cout << "\nNAMESPACE : std" << std::endl;
+}
+
+
+template <typename T, typename U>
+void print_map(ft::map<T, U> &mp, char const *label)
+{
+    std::cout << "\nmap Size: " << mp.size();
+    std::cout << "\nmap [" << label << "] contains: ";
+    if (!mp.size())
+        std::cout << "nothing";
+    else
+        std::cout << "\n\n";
+    for (typename ft::map<T, U>::iterator it = mp.begin(); it != mp.end(); ++it)
+    {
+        std::cout << "[" << it->first << "]"
+                  << " = " << it->second << std::endl;
+     }
+    std::cout << std::endl;
+}
+
+
 int main()
 {
-    ft::map<int, std::string> tree;
+    ft::map<int, int> maptGolbal;
+    print_namespace(maptGolbal);
 
-    tree.insert(ft::pair<int, std::string>(1, "james"));
-    tree.insert(ft::pair<int, std::string>(1, "james"));
-    tree.insert(ft::make_pair(2, "two"));
-    tree.insert(ft::make_pair(3, "three"));
-    tree.insert(ft::make_pair(4, "four"));
-    tree.insert(ft::make_pair(5, "five"));
-
-    std::map<int, std::string> map;
-    map.insert(std::make_pair(1, "one"));
-    map.insert(std::make_pair(2, "two"));
-    map.insert(std::make_pair(3, "three"));
-    map.insert(std::make_pair(4, "four"));
-    map.insert(std::make_pair(5, "five"));
-
-    ft::map<int, std::string>::iterator it = tree.begin();
-
-    while (it != tree.end())
+    // begin()
     {
-        std::cout << it->first << " " << it->second << std::endl;
-        ++it;
+        // std::cout << "\nbegin() & end() " << std::endl;
+        // std::cout << "=======================================" << std::endl;
+        // ft::map<int, int> map1;
+        // map1.insert(ft::make_pair(5, 1));
+        // map1.insert(ft::make_pair(10, 3));
+        // map1.insert(ft::make_pair(4, 4));
+        // map1.insert(ft::make_pair(2, 2));
+        // ft::map<int, int>::iterator it = map1.begin();
+        // print_map(map1, "map1");
+        // std::cout << "map1.begin(): " << (*it).first << std::endl;
+        // std::cout << "=======================================" << std::endl;
+    }
+    // assign operator=()
+    {
+        std::cout << "\nassign operator=()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(5, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1.insert(ft::make_pair(10, 3));
+        map1.insert(ft::make_pair(4, 4));
+        print_map(map1, "map1");
+        ft::map<int, int> map2;
+        std::cout << "before assigning map1 to map2" << std::endl;
+        print_map(map2, "map2");
+        map2 = map1;
+        std::cout << "after assigning map1 to map2" << std::endl;
+        print_map(map2, "map2");
+        std::cout << "=======================================" << std::endl;
     }
 
-    // std::cout << "==========================================" << std::endl;
+    // // clear()
+    {
+        std::cout << "\nclear()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(5, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1.insert(ft::make_pair(10, 3));
+        map1.insert(ft::make_pair(4, 4));
+        print_map(map1, "map1");
+        map1.clear();
+        std::cout << "after clearing map1" << std::endl;
+        print_map(map1, "map1");
+        std::cout << "=======================================" << std::endl;
+    }
 
-    // ft::RBT<ft::pair<int, std::string>, std::less<int>>::iterator it2 = tree._end_();
-    // int i = 0;
-    // --it2;
-    // for (; it2 != tree.begin(); --it2)
+    // // count()
+    {
+        std::cout << "\ncount()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(5, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1.insert(ft::make_pair(10, 3));
+        map1.insert(ft::make_pair(4, 4));
+        print_map(map1, "map1");
+        std::cout << "map1.count(5): " << map1.count(5) << std::endl;
+        std::cout << "map1.count(6): " << map1.count(6) << std::endl;
+        std::cout << "=======================================" << std::endl;
+    }
+
+    // // empty() and size()
     // {
-    //     std::cout << it2->first << " " << it2->second << std::endl;
-    //     ++i;
+        std::cout << "\nempty()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(5, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1.insert(ft::make_pair(10, 3));
+        map1.insert(ft::make_pair(4, 4));
+        print_map(map1, "map1");
+        std::cout << "map1.empty(): " << map1.empty() << std::endl;
+        map1.clear();
+        std::cout << "after clearing map1" << std::endl;
+        print_map(map1, "map1");
+        std::cout << "map1.empty(): " << map1.empty() << std::endl;
+        std::cout << "=======================================" << std::endl;
     // }
 
-    // std::cout << "================================================"<< std::endl;
-    // std::map<int, std::string>::iterator it3 = map.end();
-    // --it3;
-    // for (;it3 != map.begin(); --it3)
+    // // find()
+    {
+        std::cout << "\nfind()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(5, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1.insert(ft::make_pair(10, 3));
+        print_map(map1, "map1");
+        if (map1.find(5) != map1.end())
+            std::cout << "5 has been found and its second is = " << map1.find(5)->second << std::endl;
+        else
+            std::cout << "5 has not been found" << std::endl;
+        if (map1.find(6) != map1.end())
+            std::cout << "6 has been found and its second is = " << map1.find(6)->second << std::endl;
+        else
+            std::cout << "6 has not been found" << std::endl;
+        std::cout << "=======================================" << std::endl;
+    }
+
+    // // insert()
+    {
+        std::cout << "\ninsert()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(5, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1.insert(ft::make_pair(10, 3));
+        print_map(map1, "map1");
+        ft::map<int, int>::iterator it = map1.insert(ft::make_pair(4, 4)).first;
+        print_map(map1, "map1");
+        std::cout << "inserted 4, 4 at " << (*it).first << std::endl;
+        ft::pair<int, int> arr[] = {ft::make_pair(0, 20), ft::make_pair(2, 30),
+                                    ft::make_pair(3, 40), ft::make_pair(4, 50)};
+        ft::map<int, int> map2;
+        map2.insert(arr, arr + 4);
+        print_map(map2, "map2");
+        std::cout << "=======================================" << std::endl;
+    }
+
+    // // map constructors
+    {
+        std::cout << "\nmap constructors" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(5, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1[10] = 3;
+        map1[4] = 4;
+        print_map(map1, "map1");
+        ft::map<int, int> map2(map1);
+        print_map(map2, "map2");
+        ft::map<int, int> map3(map2.begin(), map2.end());
+        print_map(map3, "map3");
+        std::cout << "=======================================" << std::endl;
+    }
+
+    // // erase()
+    {
+        std::cout << "\nerase()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(0, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1.insert(ft::make_pair(10, 3));
+        map1.insert(ft::make_pair(4, 4));
+        map1.insert(ft::make_pair(3, 300));
+        map1.insert(ft::make_pair(3, 300));
+        map1.insert(ft::make_pair(1, 110));
+        map1.insert(ft::make_pair(0, 10));
+        print_map(map1, "map1");
+        std::cout << "map1.erase(0): " << map1.erase(0) << std::endl;
+        ft::map<int, int>::iterator it = map1.begin();
+        std::advance(it, 2);
+        map1.erase(map1.begin(), it);
+        print_map(map1, "map1");
+        map1.erase(map1.begin());
+        print_map(map1, "map1");
+
+        std::cout << "=======================================" << std::endl;
+    }
+
+    // // max_size()
+    {
+        std::cout << "\nmax_size()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        std::cout << "map1.max_size(): " << map1.max_size() << std::endl;
+        std::cout << "=======================================" << std::endl;
+    }
+
+    // // swap()
+    {
+        std::cout << "\nswap()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(5, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1.insert(ft::make_pair(10, 3));
+        map1.insert(ft::make_pair(4, 4));
+        print_map(map1, "map1");
+        ft::map<int, int> map2;
+        map2.insert(ft::make_pair(0, 1));
+        map2.insert(ft::make_pair(2, 2));
+        map2.insert(ft::make_pair(10, 3));
+        map2.insert(ft::make_pair(4, 4));
+        print_map(map2, "map2");
+        // map1.swap(map2);
+        // print_map(map1, "map1");
+        // print_map(map2, "map2");
+        // std::cout << "=======================================" << std::endl;
+    }
+
+    // // lower_bound()
     // {
-    //     std::cout << it3->first << " " << it3->second << std::endl;
+    //     std::cout << "\nlower_bound()" << std::endl;
+    //     std::cout << "=======================================" << std::endl;
+    //     ft::map<int, int> map1;
+    //     map1.insert(ft::make_pair(5, 1));
+    //     map1.insert(ft::make_pair(2, 2));
+    //     map1.insert(ft::make_pair(10, 3));
+    //     map1.insert(ft::make_pair(4, 4));
+    //     print_map(map1, "map1");
+    //     ft::map<int, int>::iterator it = map1.lower_bound(3);
+    //     std::cout << "map1.lower_bound(3): " << (*it).first << std::endl;
+    //     it = map1.lower_bound(5);
+    //     std::cout << "map1.lower_bound(5): " << (*it).first << std::endl;
+    //     it = map1.lower_bound(6);
+    //     std::cout << "map1.lower_bound(6): " << (*it).first << std::endl;
+    //     std::cout << "=======================================" << std::endl;
     // }
 
-    // // rbegin
-    // ft::RBT<ft::pair<int, std::string>, std::less<int>>::reverse_iterator it4 = tree.rbegin();
-    // for (; it4 != tree.rend(); ++it4)
+    // // upper_bound()
     // {
-    //     std::cout << it4->first << " " << it4->second << std::endl;
+    //     std::cout << "\nupper_bound()" << std::endl;
+    //     std::cout << "=======================================" << std::endl;
+    //     ft::map<int, int> map1;
+    //     map1.insert(ft::make_pair(5, 1));
+    //     map1.insert(ft::make_pair(2, 2));
+    //     map1.insert(ft::make_pair(10, 3));
+    //     map1.insert(ft::make_pair(4, 4));
+    //     print_map(map1, "map1");
+    //     ft::map<int, int>::iterator it = map1.upper_bound(3);
+    //     std::cout << "map1.upper_bound(3): " << (*it).first << std::endl;
+    //     it = map1.upper_bound(5);
+    //     std::cout << "map1.upper_bound(5): " << (*it).first << std::endl;
+    //     it = map1.upper_bound(6);
+    //     std::cout << "map1.upper_bound(6): " << (*it).first << std::endl;
+    //     std::cout << "=======================================" << std::endl;
     // }
 
-    // std::cout << "================================================" << std::endl;
-
-    // std::map<int, std::string>::reverse_iterator it5 = map.rbegin();
-    // for (; it5 != map.rend(); ++it5)
+    // // equal_range()
     // {
-    //     std::cout << it5->first << " " << it5->second << std::endl;
+    //     std::cout << "\nequal_range()" << std::endl;
+    //     std::cout << "=======================================" << std::endl;
+    //     ft::map<int, int> map1;
+    //     map1.insert(ft::make_pair(5, 1));
+    //     map1.insert(ft::make_pair(2, 2));
+    //     map1.insert(ft::make_pair(10, 3));
+    //     map1.insert(ft::make_pair(4, 4));
+    //     print_map(map1, "map1");
+    //     ft::pair<ft::map<int, int>::iterator, ft::map<int, int>::iterator> range = map1.equal_range(3);
+    //     std::cout << "map1.equal_range(3): " << (*range.first).first << " " << (*range.second).first << std::endl;
+    //     range = map1.equal_range(5);
+    //     std::cout << "map1.equal_range(5): " << (*range.first).first << " " << (*range.second).first << std::endl;
+    //     range = map1.equal_range(6);
+    //     std::cout << "map1.equal_range(6): " << (*range.first).first << " " << (*range.second).first << std::endl;
+    //     std::cout << "=======================================" << std::endl;
     // }
 
-    // std::cout << "================================================" << std::endl;
-
-    // // upper_bound
-    // ft::RBT<ft::pair<int, std::string>, std::less<int>>::iterator it6 = tree.upper_bound(3);
-    // for (; it6 != tree._end_(); ++it6)
+    // // get_allocator()
     // {
-    //     std::cout << it6->first << " " << it6->second << std::endl;
+    //     std::cout << "\nget_allocator()" << std::endl;
+    //     std::cout << "=======================================" << std::endl;
+    //     ft::map<int, int> map1;
+    //     print_map(map1, "map1");
+    //     ft::map<int, int>::_alloc_type alloc = map1.get_allocator();
+    //     ft::pair<int, int> *ptr = alloc.allocate(1);
+    //     alloc.deallocate(ptr, 1);
+    //     std::cout << "alloc max size: " << alloc.max_size() << std::endl;
+
+    //     std::cout << "=======================================" << std::endl;
     // }
 
-    // std::cout << "================================================" << std::endl;
-
-    // std::map<int, std::string>::iterator it7 = map.upper_bound(3);
-    // for (; it7 != map.end(); ++it7)
+    // // const iterators
     // {
-    //     std::cout << it7->first << " " << it7->second << std::endl;
-    // }
-    // std::cout << "================================================" << std::endl;
-
-    // // lower_bound
-    // ft::RBT<std::pair<int, std::string>, std::less<int>>::iterator it8 = tree.lower_bound(std::make_pair(3, "three"));
-    // for (; it8 != tree._end_(); ++it8)
-    // {
-    //     std::cout << it8->first << " " << it8->second << std::endl;
-    // }
-
-    // std::cout << "================================================" << std::endl;
-
-    // std::map<int, std::string>::iterator it9 = map.lower_bound(3);
-    // for (; it9 != map.end(); ++it9)
-    // {
-    //     std::cout << it9->first << " " << it9->second << std::endl;
+    //     std::cout << "\nconst iterators" << std::endl;
+    //     std::cout << "=======================================" << std::endl;
+    //     ft::map<int, int> map1;
+    //     map1.insert(ft::make_pair(5, 1));
+    //     map1.insert(ft::make_pair(2, 2));
+    //     map1.insert(ft::make_pair(10, 3));
+    //     map1.insert(ft::make_pair(4, 4));
+    //     print_map(map1, "map1");
+    //     ft::map<int, int>::const_iterator it = map1.begin();
+    //     std::cout << "map1.begin(): " << (*it).first << std::endl;
+    //     it = map1.end();
+    //     --it;
+    //     std::cout << "map1.end(): " << (*it).first << std::endl;
+    //     std::cout << "=======================================" << std::endl;
     // }
 
-    // std::cout << "===============================================" << std::endl;
-    // // at
-    // std::cout << tree[std::make_pair(3, "three")].first << std::endl;
-    // std::cout << tree.at(std::make_pair(3, "three")).first << std::endl;
-    // tree.clear();
+    // // reverse iterators
+    // {
+    //     std::cout << "\nreverse iterators" << std::endl;
+    //     std::cout << "=======================================" << std::endl;
+    //     ft::map<int, int> map1;
+    //     map1.insert(ft::make_pair(5, 1));
+    //     map1.insert(ft::make_pair(2, 2));
+    //     map1.insert(ft::make_pair(10, 3));
+    //     map1.insert(ft::make_pair(4, 4));
+    //     print_map(map1, "map1");
+    //     ft::map<int, int>::reverse_iterator it = map1.rbegin();
+    //     // print all elements in reverse order
+    //     for (; it != map1.rend(); ++it)
+    //     {
+    //         std::cout << "[" << (*it).first << "] = " << (*it).second << std::endl;
+    //     }
 
-    // // std::cout << tree.max_size()<< " " << map.max_size() << std::endl;
-    // return 0;
+    //     std::cout << "=======================================" << std::endl;
+    // }
+
+    // std::cout << "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of map tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
+    //           << std::endl;
+    // // end of map tests
+
+    // std::cout << "end of program" << std::endl;
 }
+
