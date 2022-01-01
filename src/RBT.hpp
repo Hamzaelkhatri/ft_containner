@@ -164,9 +164,9 @@ namespace ft
         }
     };
 
-    template <class T,                          // map::mapped_type
-              class Compare,                    // map::key_compare
-              class Alloc = std::allocator<T> > // map::allocator_type
+    template <class T,                         // map::mapped_type
+              class Compare,                   // map::key_compare
+              class Alloc = std::allocator<T>> // map::allocator_type
     class RBT
     {
 
@@ -272,13 +272,15 @@ namespace ft
 
         void makeEmpty(Node_ *n)
         {
-            if (!n || n == nil)
+            if (!n || n == nil || n == end)
                 return;
             makeEmpty(n->left);
             makeEmpty(n->right);
             alloc.destroy(n);
-            alloc.deallocate(n, 1);
-            n = NULL;
+            if (n->left != end)
+                alloc.deallocate(n, 1);
+            n->left = end;
+            n->right = end;
         }
 
         Node_ *getRootOfTree()
@@ -550,8 +552,6 @@ namespace ft
         {
             nil = alloc.allocate(1);
             end = alloc.allocate(1);
-            alloc.construct(nil, Node_());
-            alloc.construct(end, Node_());
             end->right = nil;
             nil->color = BLACK;
             nil->left = NULL;
@@ -562,23 +562,6 @@ namespace ft
             comp = Compare();
             size = 0;
         }
-        RBT(const RBT<value_type, Compare> &rhs)
-        {
-            makeEmpty();
-            nil = alloc.allocate(1);
-            end = alloc.allocate(1);
-            alloc.construct(nil, Node_());
-            alloc.construct(end, Node_());
-            end->right = nil;
-            end->right = nil;
-            root = rhs.root;
-            size = rhs.size;
-            root->parent = end;
-            end->left = root;
-            *this = rhs;
-        }
-
-  
 
         void insert(value_type key, Compare value)
         {
@@ -705,14 +688,22 @@ namespace ft
         {
             clear_leak(root);
         }
-
         // insert
         ~RBT()
         {
-            alloc.destroy(nil);
-            alloc.destroy(end);
-            alloc.deallocate(nil, 1);
-            alloc.deallocate(end, 1);
+            makeEmpty();
+            if (nil->right != end)
+            {
+                alloc.destroy(nil);
+                alloc.deallocate(nil, 1);
+                nil->right = end;
+            }
+            if (end->right != end)
+            {
+                alloc.destroy(end);
+                alloc.deallocate(end, 1);
+                end->right = end;
+            }
         }
 
         // begin
@@ -791,7 +782,7 @@ namespace ft
         // successor
         Node_ *successor(Node_ *n)
         {
-            if (n->right != nil)
+            if (n->right != nil && n->right != NULL)
                 return treeMinimum(n->right);
             Node_ *y = n->parent;
             while (y != nil && n == y->right)
@@ -861,7 +852,6 @@ namespace ft
         void swap(RBT &other)
         {
             std::swap(root, other.root);
-            std::swap(nil, other.nil);
             std::swap(size, other.size);
             std::swap(comp, other.comp);
             std::swap(alloc, other.alloc);
