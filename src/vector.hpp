@@ -109,7 +109,10 @@ namespace ft
         // get_allocator
         allocator_type get_allocator() const { return _alloc; }
         // max_size
-        size_type max_size() const { return _alloc.max_size(); }
+        size_type max_size() const
+        {
+            return (std::min(alloc.max_size(), std::numeric_limits<size_type>::max()));
+        }
         // element access
         reference operator[](size_type n) { return _data[n]; }
         const_reference operator[](size_type n) const { return _data[n]; }

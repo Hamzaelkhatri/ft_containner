@@ -141,7 +141,6 @@ namespace ft
         {
             return *(*this + n);
         }
-
         // ->
         pointer operator->() const
         {
@@ -189,12 +188,7 @@ namespace ft
     {
         return reverse_iterator<Iterator>(rhs.base() + n);
     }
-    // template <
-    //     class T1,
-    //     class T2>
-    //  pair
-    // {
-    // }
+
 }
 
 #endif

@@ -109,7 +109,7 @@ namespace ft
             return &(operator*());
         }
 
-        RBT_iter &operator++()
+        RBT_iter &operator++() //
         {
             it = rbt_->successor(it);
             return *this;
@@ -118,7 +118,7 @@ namespace ft
         RBT_iter operator++(int)
         {
             RBT_iter tmp = *this;
-            rbt_->successor(it);
+            it = rbt_->successor(it);
             return tmp;
         }
 
@@ -187,11 +187,11 @@ namespace ft
         typedef ft::RBT_iter<self, Node_, pointer> const_iterator;
         typedef ft::reverse_iterator<iterator> reverse_iterator;
         typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
-
-    private:
         Node_ *root;
         Node_ *end;
         Node_ *nil;
+
+    private:
         node_allocator alloc;
         int height;
         Compare comp;
@@ -223,7 +223,7 @@ namespace ft
             n->height = (hl > hr ? hl : hr) + 1;
         }
 
-         void rotateRight(Node_ *n)
+        void rotateRight(Node_ *n)
         {
 
             Node_ *l = n->left;
@@ -272,11 +272,13 @@ namespace ft
 
         void makeEmpty(Node_ *n)
         {
-            if (n == nil)
+            if (!n || n == nil)
                 return;
             makeEmpty(n->left);
             makeEmpty(n->right);
             alloc.destroy(n);
+            alloc.deallocate(n, 1);
+            n = NULL;
         }
 
         Node_ *getRootOfTree()
@@ -288,7 +290,7 @@ namespace ft
         void
         insertFixup(Node_ *_node)
         {
-           Node_ *tmp;
+            Node_ *tmp;
             while (_node->parent->color == RED)
             {
                 if (_node->parent == _node->parent->parent->right)
@@ -369,7 +371,7 @@ namespace ft
             return count + 1;
         }
 
-       void insert(T data)
+        void insert(T data)
         {
             if (root == nil)
             {
@@ -411,7 +413,6 @@ namespace ft
             }
         }
 
-
         void printTree(Node_ *n)
         {
             // print tree with details
@@ -434,7 +435,6 @@ namespace ft
             }
             return isRBProper(n->left) && isRBProper(n->right);
         }
-
 
         // transplant
         void transplant(Node_ *u, Node_ *v)
@@ -531,11 +531,27 @@ namespace ft
             x->color = BLACK;
         }
 
+        // iterative delete
+        void clear_leak(Node_ *n)
+        {
+            while (n != nil)
+            {
+                if (n->left != nil)
+                    clear_leak(n->left);
+                if (n->right != nil)
+                    clear_leak(n->right);
+                alloc.deallocate(n, 1);
+                n = nil;
+            }
+        }
+
     public:
         RBT()
         {
             nil = alloc.allocate(1);
             end = alloc.allocate(1);
+            alloc.construct(nil, Node_());
+            alloc.construct(end, Node_());
             end->right = nil;
             nil->color = BLACK;
             nil->left = NULL;
@@ -545,27 +561,24 @@ namespace ft
             end->parent = end;
             comp = Compare();
             size = 0;
-            
         }
-        // RBT(const RBT<value_type, Compare> &rhs)
-        // {
-        //     nil = alloc.allocate(1);
-        //     root = nil;
-        //     root->color = BLACK;
-        //     root->left = nil;
-        //     root->right = nil;
-        //     size = 0;
-            
-        //     end = alloc.allocate(1);
-        //     end->left = NULL;
-        //     end->right = NULL;
-        //     end->parent = NULL;
-        //     end->color = RED;
-        //     end->height = 1;
-        //     root->parent = end
+        RBT(const RBT<value_type, Compare> &rhs)
+        {
+            makeEmpty();
+            nil = alloc.allocate(1);
+            end = alloc.allocate(1);
+            alloc.construct(nil, Node_());
+            alloc.construct(end, Node_());
+            end->right = nil;
+            end->right = nil;
+            root = rhs.root;
+            size = rhs.size;
+            root->parent = end;
+            end->left = root;
+            *this = rhs;
+        }
 
-        //     *this = rhs;
-        // }
+  
 
         void insert(value_type key, Compare value)
         {
@@ -606,7 +619,7 @@ namespace ft
         }
 
         // search
-       
+
         // delete node
         void
         deleteNode(value_type key)
@@ -652,6 +665,7 @@ namespace ft
             }
 
             alloc.destroy(_node);
+            alloc.deallocate(_node, 1);
             if (y_original_color == BLACK)
             {
                 deleteFixup(x);
@@ -686,17 +700,26 @@ namespace ft
         //     }
         //     return nil;
         // }
+
+        void clear_leak()
+        {
+            clear_leak(root);
+        }
+
         // insert
         ~RBT()
         {
-            makeEmpty();
+            alloc.destroy(nil);
+            alloc.destroy(end);
+            alloc.deallocate(nil, 1);
+            alloc.deallocate(end, 1);
         }
 
         // begin
         iterator begin()
         {
             Node_ *n = root;
-            if(root == nil)
+            if (root == nil)
                 return _end_();
             while (n->left != nil)
                 n = n->left;
@@ -778,7 +801,7 @@ namespace ft
             }
             return y;
         }
-         Node_ *search(T key)
+        Node_ *search(T key)
         {
             Node_ *n = root;
             while (n != nil)
@@ -801,18 +824,20 @@ namespace ft
         // predecessor
         Node_ *predecessor(Node_ *n)
         {
-            if (n->left != nil)
+            if (n->left != nil && n->left != end)
                 return treeMaximum(n->left);
-            Node_ *y = n->parent;
-            while (y != nil && n == y->left)
+            Node_ *tmp = n->parent;
+            while (tmp != end && n == tmp->left)
             {
-                n = y;
-                y = y->parent;
+                n = tmp;
+                tmp = tmp->parent;
             }
-            return y;
+            if (tmp == end)
+                return treeMaximum(root);
+            return (tmp);
         }
 
-        //count
+        // count
         size_t count(const T &key) const
         {
             Node_ *n = root;
@@ -839,13 +864,63 @@ namespace ft
             std::swap(nil, other.nil);
             std::swap(size, other.size);
             std::swap(comp, other.comp);
+            std::swap(alloc, other.alloc);
         }
-        // earse
-        // void erase(iterator it)
-        // {
-        //     deleteNode(it.node->_data);
-        // }
-        
+
+        // lower_bound
+        iterator lower_bound(const T &data)
+        {
+            iterator _from = this->begin();
+            iterator _to = this->_end_();
+            while (_from != _to)
+            {
+                if (!comp((*_from).first, data.first))
+                    return _from;
+                ++_from;
+            }
+            return _from;
+        }
+        const_iterator lower_bound(const T &data) const
+        {
+            return (const_iterator(lower_bound(data)));
+        }
+        // upper_bound
+        iterator upper_bound(const T &data)
+        {
+            iterator _from = this->begin();
+            iterator _to = this->_end_();
+            while (_from != _to)
+            {
+                if (comp(data.first, (*_from).first))
+                    return _from;
+                ++_from;
+            }
+            return _from;
+        }
+        const_iterator upper_bound(const T &data) const
+        {
+            return (const_iterator(upper_bound(data)));
+        }
+
+        // equal_range
+        ft::pair<iterator, iterator> equal_range(const T &data)
+        {
+            return ft::make_pair(lower_bound(data), upper_bound(data));
+        }
+        // max_size
+        size_t max_size() const
+        {
+            return (std::min(alloc.max_size(), std::numeric_limits<size_type>::max()));
+        }
+
+        reverse_iterator rend()
+        {
+            return reverse_iterator(begin());
+        }
+        reverse_iterator rbegin()
+        {
+            return reverse_iterator(_end_());
+        }
     };
 }
 #endif // RBT_HPP∂

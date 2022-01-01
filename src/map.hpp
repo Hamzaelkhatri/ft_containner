@@ -91,6 +91,12 @@ namespace ft
             }
         }
 
+        //~destructor
+        ~map()
+        {
+
+        }
+
         // insert
         iterator insert(iterator position, const value_type &val)
         {
@@ -167,13 +173,15 @@ namespace ft
         // swap
         void swap(map &other)
         {
-            _tree.swap(other._tree);
+            this->_comp = other._comp;
+            this->_alloc = other._alloc;
+            this->_tree = other._tree;
         }
 
         // clear
         void clear()
         {
-            _tree.clear();
+            _tree.makeEmpty();
         }
 
         // key_comp
@@ -251,7 +259,7 @@ namespace ft
         // count
         size_type count(const key &x) const
         {
-            if( _tree.count(ft::pair<key, mapped_type>(x, mapped_type())) == 0)
+            if (_tree.count(ft::pair<key, mapped_type>(x, mapped_type())) == 0)
                 return 0;
             return 1;
         }
@@ -262,8 +270,17 @@ namespace ft
             return _tree.lower_bound(ft::pair<key, mapped_type>(x, mapped_type()));
         }
 
+        const_iterator lower_bound(const key &x) const
+        {
+            return _tree.lower_bound(ft::pair<key, mapped_type>(x, mapped_type()));
+        }
         // upper_bound
         iterator upper_bound(const key &x)
+        {
+            return _tree.upper_bound(ft::pair<key, mapped_type>(x, mapped_type()));
+        }
+
+        const_iterator upper_bound(const key &x) const
         {
             return _tree.upper_bound(ft::pair<key, mapped_type>(x, mapped_type()));
         }
@@ -272,18 +289,6 @@ namespace ft
         ft::pair<iterator, iterator> equal_range(const key &x)
         {
             return _tree.equal_range(ft::pair<key, mapped_type>(x, mapped_type()));
-        }
-
-        // const_lower_bound
-        const_iterator lower_bound(const key &x) const
-        {
-            return _tree.lower_bound(ft::pair<key, mapped_type>(x, mapped_type()));
-        }
-
-        // const_upper_bound
-        const_iterator upper_bound(const key &x) const
-        {
-            return _tree.upper_bound(ft::pair<key, mapped_type>(x, mapped_type()));
         }
 
         // const_equal_range
@@ -301,17 +306,40 @@ namespace ft
         // operator=
         map &operator=(const map &other)
         {
+            _tree.makeEmpty();
             _comp = other._comp;
             _alloc_ = other._alloc_;
-            _tree = other._tree;
+            new (&_tree) tree(other._tree);
             return *this;
         }
 
         // max size
         size_t max_size()
         {
-            return _alloc_.max_size();
+            return _tree.max_size();
         }
+
+        // reverse_iterator rbegin()
+        // {
+        //     return _tree.rbegin();
+        // }
+
+        // reverse_iterator rend()
+        // {
+        //     return _tree.rend();
+        // }
+
+        // const_reverse_iterator rbegin() const
+        // {
+        //     return _tree.rbegin();
+        // }
+
+        // const_reverse_iterator rend() const
+        // {
+        //     return _tree.rend();
+        // }
+
+        // // operator==
     };
 };
 #endif

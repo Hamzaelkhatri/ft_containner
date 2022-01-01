@@ -14,7 +14,7 @@ namespace ft
     template <class T, class Container = ft::vector<T> >
     class stack
     {
-    private:
+    protected:
         Container c;
 
     public:
