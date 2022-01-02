@@ -13,7 +13,7 @@ namespace ft
     template <class Key,
               class T,
               class Compare = std::less<Key>,
-              class Alloc = std::allocator<ft::pair<const Key, T> > >
+              class Alloc = std::allocator<ft::pair<const Key, T>>>
     class map
     {
 
@@ -75,6 +75,7 @@ namespace ft
         }
         map(const map &other)
         {
+            _tree.~RBT();
             _comp = other._comp;
             _alloc_ = other._alloc_;
             _tree = other._tree;
@@ -108,7 +109,7 @@ namespace ft
         // insert
         pair<iterator, bool> insert(const value_type &val)
         {
-            // if (_tree.find(val) == end())
+            if (_tree.find(val) == end())
             {
                 _tree.insert_(val);
                 return pair<iterator, bool>(_tree.find(val), false);
@@ -174,9 +175,15 @@ namespace ft
         // swap
         void swap(map &other)
         {
-            this->_comp = other._comp;
-            this->_alloc = other._alloc;
-            this->_tree = other._tree;
+            // if (*this->_tree == other._tree)
+            // {
+            //     return;
+            // }
+                _tree.~RBT();
+                this->_comp = other._comp;
+                this->_alloc = other._alloc;
+                this->_tree = other._tree;
+            // }
         }
 
         // clear
