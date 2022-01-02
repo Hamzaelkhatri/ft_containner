@@ -41,7 +41,8 @@ namespace ft
         typedef typename tree::reverse_iterator reverse_iterator;
         typedef typename tree::const_reverse_iterator const_reverse_iterator;
         typedef typename tree::difference_type difference_type;
-        typedef typename tree::node_allocator allocator_type;
+        typedef typename tree::node_allocator allocator_types;
+        typedef Alloc allocator_type;
         typedef Alloc _Alloc_;
         typedef size_t size_type;
         allocator_type _alloc;
@@ -95,8 +96,8 @@ namespace ft
         //~destructor
         ~map()
         {
-            _tree.makeEmpty();
-            _tree.~RBT();
+            // _tree.makeEmpty();
+            // _tree.~RBT();
         }
 
         // insert
@@ -109,7 +110,7 @@ namespace ft
         // insert
         pair<iterator, bool> insert(const value_type &val)
         {
-            // if (_tree.find(val) == end())
+            if (_tree.find(val) == end())
             {
                 _tree.insert_(val);
                 return pair<iterator, bool>(_tree.find(val), false);
