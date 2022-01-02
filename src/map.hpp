@@ -95,8 +95,8 @@ namespace ft
         //~destructor
         ~map()
         {
-            // _tree.makeEmpty();
-            // _tree.~RBT();
+            _tree.makeEmpty();
+            _tree.~RBT();
         }
 
         // insert
@@ -109,7 +109,7 @@ namespace ft
         // insert
         pair<iterator, bool> insert(const value_type &val)
         {
-            if (_tree.find(val) == end())
+            // if (_tree.find(val) == end())
             {
                 _tree.insert_(val);
                 return pair<iterator, bool>(_tree.find(val), false);

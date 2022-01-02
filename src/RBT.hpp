@@ -736,7 +736,7 @@ namespace ft
                 else
                     n = n->right;
             }
-            return iterator(nil, this);
+            return iterator(end, this);
         }
 
         // erase
@@ -755,7 +755,7 @@ namespace ft
         // clear
         void clear()
         {
-            makeEmpty();
+            // makeEmpty();
         }
         // empty
         bool empty()
