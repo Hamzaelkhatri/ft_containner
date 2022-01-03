@@ -18,19 +18,19 @@ namespace ft
     class iterator
     {
     public:
+        typedef Reference reference;
         typedef Category iterator_category;
         typedef T value_type;
         typedef Distance difference_type;
         typedef Pointer pointer;
-        typedef Reference reference;
     };
     // create iterator_traits
     template <class Iterator>
     struct iterator_traits
     {
+        typedef typename Iterator::difference_type difference_type;
         typedef typename Iterator::iterator_category iterator_category;
         typedef typename Iterator::value_type value_type;
-        typedef typename Iterator::difference_type difference_type;
         typedef typename Iterator::pointer pointer;
         typedef typename Iterator::reference reference;
     };
@@ -64,12 +64,12 @@ namespace ft
         Iterator current;
 
     public:
+        typedef typename iterator_traits<Iterator>::reference reference;
         typedef Iterator iterator_type;
         typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
         typedef typename iterator_traits<Iterator>::value_type value_type;
         typedef typename iterator_traits<Iterator>::difference_type difference_type;
         typedef typename iterator_traits<Iterator>::pointer pointer;
-        typedef typename iterator_traits<Iterator>::reference reference;
         // constructor default
         reverse_iterator() : current(0) {}
         // constructor initialisation

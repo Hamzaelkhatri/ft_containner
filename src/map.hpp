@@ -23,16 +23,7 @@ namespace ft
         typedef ft::pair<const key, mapped_type> value_type;
         typedef Compare key_compare;
         // typedef Alloc allocator_type;
-        // typedef typename allocator_type::reference reference;
-        // typedef typename allocator_type::const_reference const_reference;
-        // typedef typename allocator_type::pointer pointer;
-        // typedef typename allocator_type::const_pointer const_pointer;
-        // typedef RBT<key, mapped_type, Compare, Alloc> tree_type;
-        // typedef typename tree_type::iterator iterator;
-        // typedef typename tree_type::const_iterator const_iterator;
-        // typedef typename tree_type::reverse_iterator reverse_iterator;
-        // typedef typename tree_type::const_reverse_iterator const_reverse_iterator;
-        // typedef typename tree_type::difference_type difference_type;
+
         // typedef typename ft::Node<key, mapped_type> Node;
         // typedef ft::Node<key, mapped_type> *NodePtr;
         typedef ft::RBT<value_type, Compare, Alloc> tree;
@@ -42,6 +33,10 @@ namespace ft
         typedef typename tree::const_reverse_iterator const_reverse_iterator;
         typedef typename tree::difference_type difference_type;
         typedef typename tree::node_allocator allocator_types;
+        typedef typename tree::node_reference reference;
+        typedef typename tree::const_node_reference const_reference;
+        typedef typename tree::pointer pointer;
+        typedef typename tree::const_node_pointer const_pointer;
         typedef Alloc allocator_type;
         typedef size_t size_type;
 
@@ -125,11 +120,6 @@ namespace ft
                 _tree.insert_(ft::make_pair(first->first, first->second));
                 ++first;
             }
-        }
-
-        void print()
-        {
-            _tree.printTree();
         }
 
         // erase

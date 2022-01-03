@@ -344,7 +344,6 @@ int main()
         map1.insert(ft::make_pair(4, 4));
         print_map(map1, "map1");
         ft::map<int, int>::reverse_iterator it = map1.rbegin();
-        // print all elements in reverse order
         for (; it != map1.rend(); ++it)
         {
             std::cout << "[" << (*it).first << "] = " << (*it).second << std::endl;
@@ -355,7 +354,6 @@ int main()
 
     std::cout << "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of map tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
               << std::endl;
-    // end of map tests
 
     std::cout << "end of program" << std::endl;
 }

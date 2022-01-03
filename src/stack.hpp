@@ -22,7 +22,6 @@ namespace ft
         typedef T value_type;
         typedef Container container_type;
         typedef typename Container::size_type size_type;
-
         // contructor
         explicit stack(const container_type &ctnr = container_type())
         {

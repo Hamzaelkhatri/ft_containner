@@ -30,33 +30,18 @@ namespace ft
 
     enum Color
     {
-        RED,
-        BLACK
+        BLACK,
+        RED
     };
 
     template <class T>
     struct Node
     {
-        bool color;    //
-        T _data;
-        Node *left;   // Left child
-        Node *right;  // Right child
         Node *parent; // Parent
-
-        // default constructor
-        Node()
-        {
-            left = right = parent = NULL;
-            color = BLACK;
-        }
-
-        // constructor
-        Node(T data)
-        {
-            _data = data;
-            left = right = parent = NULL;
-            color = BLACK;
-        }
+        int color;    //
+        T data;
+        Node *right;  // Right child
+        Node *left;   // Left child
     };
 
     // create a iteratorClass for RBT
@@ -175,22 +160,21 @@ namespace ft
         typedef typename Alloc::reference node_reference;
         typedef typename Alloc::const_reference const_node_reference;
         typedef typename Alloc::size_type size_type;
-        typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
         typedef struct Node<value_type> *NodePtr;
         typedef RBT *self;
-        int size;
         typedef ft::RBT_iter<self, Node_, pointer> iterator;
         typedef ft::RBT_iter<self, Node_, pointer> const_iterator;
+        typedef typename iterator_traits<iterator>::difference_type difference_type;
         typedef ft::reverse_iterator<iterator> reverse_iterator;
         typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
-        //difference_type
+        // difference_type
+        size_type size;
         Node_ *root;
         Node_ *end;
         Node_ *nil;
 
     private:
         node_allocator alloc;
-        int height;
         Compare comp;
 
         Node_ *grandparent(Node_ *n)
@@ -210,14 +194,6 @@ namespace ft
                 return g->right;
             else
                 return g->left;
-        }
-
-        void
-        updateHeight(Node_ *n)
-        {
-            int hl = (n->left == nil) ? 0 : n->left->height;
-            int hr = (n->right == nil) ? 0 : n->right->height;
-            n->height = (hl > hr ? hl : hr) + 1;
         }
 
         void rotateRight(Node_ *n)
@@ -343,32 +319,7 @@ namespace ft
             root->parent = end;
         }
 
-        int cout_left_height()
-        {
-            int count = 0;
-            Node_ *temp = root;
-            while (temp->left != nil)
-            {
-                temp = temp->left;
-                if (temp->color == BLACK)
-                    count++;
-                count++;
-            }
-            return count + 1;
-        }
-
-        int cout_right_height()
-        {
-            int count = 0;
-            Node_ *temp = root;
-            while (temp->right != nil)
-            {
-                temp = temp->right;
-                if (temp->color == BLACK)
-                    count++;
-            }
-            return count + 1;
-        }
+        
 
         void insert(T data)
         {
@@ -396,44 +347,22 @@ namespace ft
                 while (tmp != nil)
                 {
                     tmp2 = tmp;
-                    if (comp(data.first, tmp->_data.first))
+                    if (comp(data, tmp->_data))
                         tmp = tmp->left;
-                    else if (comp(tmp->_data.first, data.first))
+                    else if (comp(tmp->_data, data))
                         tmp = tmp->right;
                     else
                         return;
                 }
                 _new->parent = tmp2;
-                if (comp(data.first, tmp2->_data.first))
+                if (comp(data, tmp2->_data))
                     tmp2->left = _new;
-                else if (comp(tmp2->_data.first, data.first))
+                else if (comp(tmp2->_data, data))
                     tmp2->right = _new;
                 insertFixup(_new);
             }
         }
-
-        void printTree(Node_ *n)
-        {
-            // print tree with details
-            if (n == nil || !n)
-                return;
-            printTree(n->left);
-            std::cout << "adrs of node " << n << " Key: " << n->_data.first << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == end ? "\033[0;31mROOT " : "CHILD ") << "\033[0mLeft: " << (n->left != nil ? std::to_string(n->left->_data.first) : "nil") << " Right: " << (n->right != nil ? std::to_string(n->right->_data.first) : "nil") << std::endl;
-            printTree(n->right);
-        }
-
-        int isRBProper(Node_ *n)
-        {
-            if (n == nil)
-                return 1;
-            if (n->color == RED && ((n->left != nil && n->left->color == RED) || (n->right != nil && n->right->color == RED)))
-            {
-                // print details
-                std::cout << "adrs of node " << n << " Node_: " << n->_data.first << " Color: " << (n->color == 0 ? "RED" : "BLACK") << " Height: " << n->height << " Parent: " << (n->parent == end ? "\033[0;31mROOT\033[0m" : "CHILD ") << " Left: " << (n->left != nil ? std::to_string(n->left->_data.first) : "nil") << " Right: " << (n->right != nil ? std::to_string(n->right->_data.first) : "nil") << std::endl;
-                return 0;
-            }
-            return isRBProper(n->left) && isRBProper(n->right);
-        }
+        // }
 
         // transplant
         void transplant(Node_ *u, Node_ *v)
@@ -542,6 +471,7 @@ namespace ft
                 alloc.deallocate(n, 1);
                 n = nil;
             }
+            size = 0;
         }
 
     public:
@@ -578,15 +508,6 @@ namespace ft
         }
 
         // insert with return pair
-
-        void addPair(std::pair<value_type, Compare> pair)
-        {
-            // use allocator for rebind to use custom allocator
-            Node_ *n = new Node_(pair.first);
-            n->value = pair.second;
-            insert(n);
-        }
-
         void makeEmpty()
         {
             makeEmpty(root);
@@ -669,12 +590,12 @@ namespace ft
         //     Node_ *n = root;
         //     while (n != nil)
         //     {
-        //         if (n->_data.first == key)
+        //         if (n->_data == key)
         //         {
         //             value = n->value;
         //             return n;
         //         }
-        //         else if (n->_data.first > key)
+        //         else if (n->_data > key)
         //             n = n->left;
         //         else
         //             n = n->right;
@@ -690,19 +611,19 @@ namespace ft
         ~RBT()
         {
 
-            if (nil->height != -100)
-            {
-                makeEmpty();
-                nil->height = -100;
-                alloc.destroy(nil);
-                alloc.deallocate(nil, 1);
-            }
-            if(end->height != -100)
-            {
-                alloc.destroy(end);
-                alloc.deallocate(end, 1);
-                end->height = -100;
-            }
+            // if (nil->color != -1)
+            // {
+            //     makeEmpty();
+            //     alloc.destroy(nil);
+            //     alloc.deallocate(nil, 1);
+            //     nil->color = -1;
+            // }
+            // if (end->color == -1)
+            // {
+            //     alloc.destroy(end);
+            //     alloc.deallocate(end, 1);
+            //     end->color = -1;
+            // }
         }
 
         // begin
@@ -728,9 +649,9 @@ namespace ft
             Node_ *n = root;
             while (n != nil)
             {
-                if (n->_data.first == key.first)
+                if (n->_data == key)
                     return iterator(n, this);
-                else if (n->_data.first > key.first)
+                else if (n->_data > key)
                     n = n->left;
                 else
                     n = n->right;
@@ -743,23 +664,26 @@ namespace ft
         {
             std::cout << "erase" << std::endl;
             deleteNode(it.it->_data);
+            size--;
         }
 
         // erase
         void erase(value_type key)
         {
             deleteNode(key);
+            size--;
         }
 
         // clear
         void clear()
         {
-            // makeEmpty();
+            makeEmpty();
+            size = 0;
         }
         // empty
-        bool empty()
+        bool empty() const
         {
-            return empty();
+            return size == 0;
         }
 
         // begin
@@ -796,9 +720,9 @@ namespace ft
             Node_ *n = root;
             while (n != nil)
             {
-                if (comp(key.first, n->_data.first))
+                if (comp(key, n->_data))
                     n = n->left;
-                else if (comp(n->_data.first, key.first))
+                else if (comp(n->_data, key))
                     n = n->right;
                 else
                     return n;
@@ -834,12 +758,12 @@ namespace ft
             int count = 0;
             while (n != nil)
             {
-                if (n->_data.first == key.first)
+                if (n->_data == key)
                 {
                     count++;
                     break;
                 }
-                else if (n->_data.first > key.first)
+                else if (n->_data > key)
                     n = n->left;
                 else
                     n = n->right;
@@ -850,10 +774,12 @@ namespace ft
         // swap
         void swap(RBT &other)
         {
-            std::swap(root, other.root);
-            std::swap(size, other.size);
-            std::swap(comp, other.comp);
-            std::swap(alloc, other.alloc);
+            ft::swap(root, other.root);
+            ft::swap(size, other.size);
+            ft::swap(comp, other.comp);
+            ft::swap(alloc, other.alloc);
+            ft::swap(nil, other.nil);
+            ft::swap(end, other.end);
         }
 
         // lower_bound
@@ -863,7 +789,7 @@ namespace ft
             iterator _to = this->_end_();
             while (_from != _to)
             {
-                if (!comp((*_from).first, data.first))
+                if (!comp((*_from), data))
                     return _from;
                 ++_from;
             }
@@ -880,7 +806,7 @@ namespace ft
             iterator _to = this->_end_();
             while (_from != _to)
             {
-                if (comp(data.first, (*_from).first))
+                if (comp(data, (*_from)))
                     return _from;
                 ++_from;
             }
@@ -896,13 +822,11 @@ namespace ft
         {
             return ft::make_pair(lower_bound(data), upper_bound(data));
         }
-        
         // max_size
-        deference_type max_size() const
+        size_type max_size() const
         {
-            return deference_type(2);
+            return (std::numeric_limits<ptrdiff_t>::max());
         }
-
         reverse_iterator rend()
         {
             return reverse_iterator(begin());
