@@ -164,8 +164,8 @@ namespace ft
         }
     };
 
-    template <class T,                         // map::mapped_type
-              class Compare,                   // map::key_compare
+    template <class T,                          // map::mapped_type
+              class Compare,                    // map::key_compare
               class Alloc = std::allocator<T> > // map::allocator_type
     class RBT
     {
@@ -552,7 +552,7 @@ namespace ft
         {
             nil = alloc.allocate(1);
             end = alloc.allocate(1);
-            end->right = nil;
+            end->right = NULL;
             nil->color = BLACK;
             nil->left = NULL;
             nil->right = NULL;
@@ -593,6 +593,7 @@ namespace ft
         void makeEmpty()
         {
             makeEmpty(root);
+            size = 0;
         }
 
         // check if tree has a RED BLACK PROPERTY
@@ -691,18 +692,19 @@ namespace ft
         // insert
         ~RBT()
         {
-            makeEmpty();
-            if (nil->right != end)
+
+            if (nil->height != -100)
             {
+                makeEmpty();
+                nil->height = -100;
                 alloc.destroy(nil);
                 alloc.deallocate(nil, 1);
-                nil->right = end;
             }
-            if (end->right != end)
+            if(end->height != -100)
             {
                 alloc.destroy(end);
                 alloc.deallocate(end, 1);
-                end->right = end;
+                end->height = -100;
             }
         }
 
@@ -912,17 +914,17 @@ namespace ft
             return reverse_iterator(_end_());
         }
 
-        //operator=
-        // RBT &operator=(RBT other)
-        // {
-        //     // this->root = other.root;
-        //     // this->size = other.size;
-        //     // this->comp = other.comp;
-        //     // this->alloc = other.alloc;
-        //     // this->end = other.end;
-        //     // this->nil = other.nil;
-        //     return *this;
-        // }
+        // operator=
+        //  RBT &operator=(RBT other)
+        //  {
+        //      // this->root = other.root;
+        //      // this->size = other.size;
+        //      // this->comp = other.comp;
+        //      // this->alloc = other.alloc;
+        //      // this->end = other.end;
+        //      // this->nil = other.nil;
+        //      return *this;
+        //  }
     };
 }
 #endif // RBT_HPP∂

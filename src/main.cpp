@@ -72,15 +72,15 @@ int main()
         map1.insert(ft::make_pair(2, 2));
         map1.insert(ft::make_pair(10, 3));
         map1.insert(ft::make_pair(4, 4));
-        print_map(map1, "map1");
-        ft::map<int, int> map2;
+        print_map(map1, "map1");    
+        ft::map<int, int> map2(map1);
         std::cout << "before assigning map1 to map2" << std::endl;
         print_map(map2, "map2");
-        map2 = map1;
-        // std::cout << "after assigning map1 to map2" << std::endl;
-        // print_map(map2, "map2");
-        // std::cout << "=======================================" << std::endl;
-        // // map2.clear();
+
+        std::cout << "after assigning map1 to map2" << std::endl;
+        print_map(map2, "map2");
+        std::cout << "=======================================" << std::endl;
+        map2.clear();
     // }
 
     // // // clear()

@@ -174,8 +174,8 @@ namespace ft
         // swap
         void swap(const map &other)
         {
-            // if (this == &other)
-                // return;
+            if (this == &other)
+                return;
             _tree.~RBT();
             this->_comp = other._comp;
             this->_alloc_ = other._alloc_;
@@ -313,11 +313,11 @@ namespace ft
         {
             if (this != &other)
             {
-                swap(other);
-                // _tree.~RBT();
-                // this->_tree = other._tree;
-                // this->_comp = other._comp;
-                // this->_alloc_ = other._alloc_;
+                // swap(other);
+                _tree.~RBT();
+                this->_tree = other._tree;
+                this->_comp = other._comp;
+                this->_alloc_ = other._alloc_;
                 // map<key, mapped_type, key_compare, allocator_type> tmp(other);
             }
             // copy constructor
