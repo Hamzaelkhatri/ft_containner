@@ -13,7 +13,7 @@ namespace ft
     template <class Key,
               class T,
               class Compare = std::less<Key>,
-              class Alloc = std::allocator<ft::pair<const Key, T>>>
+              class Alloc = std::allocator<ft::pair<const Key, T> > >
     class map
     {
 
@@ -43,13 +43,11 @@ namespace ft
         typedef typename tree::difference_type difference_type;
         typedef typename tree::node_allocator allocator_types;
         typedef Alloc allocator_type;
-        typedef Alloc _Alloc_;
         typedef size_t size_type;
-        allocator_type _alloc;
 
     private:
         tree _tree;
-        _Alloc_ _alloc_;
+        allocator_type _alloc_;
         key_compare _comp;
 
     public:
@@ -76,7 +74,7 @@ namespace ft
         }
         map(const map &other)
         {
-            _tree.~RBT();
+            // _tree.~RBT();
             _comp = other._comp;
             _alloc_ = other._alloc_;
             _tree = other._tree;
@@ -174,16 +172,14 @@ namespace ft
         }
 
         // swap
-        void swap(map &other)
+        void swap(const map &other)
         {
-            // if (*this->_tree == other._tree)
-            // {
-            //     return;
-            // }
-                _tree.~RBT();
-                this->_comp = other._comp;
-                this->_alloc = other._alloc;
-                this->_tree = other._tree;
+            // if (this == &other)
+                // return;
+            _tree.~RBT();
+            this->_comp = other._comp;
+            this->_alloc_ = other._alloc_;
+            this->_tree = other._tree;
             // }
         }
 
@@ -315,11 +311,17 @@ namespace ft
         // operator=
         map &operator=(const map &other)
         {
-            _tree.~RBT();
-            _comp = other._comp;
-            _alloc_ = other._alloc_;
-            // new (&_tree) tree(other._tree);
-            _tree = other._tree;
+            if (this != &other)
+            {
+                swap(other);
+                // _tree.~RBT();
+                // this->_tree = other._tree;
+                // this->_comp = other._comp;
+                // this->_alloc_ = other._alloc_;
+                // map<key, mapped_type, key_compare, allocator_type> tmp(other);
+            }
+            // copy constructor
+
             return *this;
         }
 

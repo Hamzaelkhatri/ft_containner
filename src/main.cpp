@@ -65,22 +65,22 @@ int main()
     }
     // assign operator=()
     // {
-    //     std::cout << "\nassign operator=()" << std::endl;
-    //     std::cout << "=======================================" << std::endl;
-    //     ft::map<int, int> map1;
-    //     map1.insert(ft::make_pair(5, 1));
-    //     map1.insert(ft::make_pair(2, 2));
-    //     map1.insert(ft::make_pair(10, 3));
-    //     map1.insert(ft::make_pair(4, 4));
-    //     print_map(map1, "map1");
-    //     ft::map<int, int> map2;
-    //     std::cout << "before assigning map1 to map2" << std::endl;
-    //     print_map(map2, "map2");
-    //     map2 = map1;
-    //     std::cout << "after assigning map1 to map2" << std::endl;
-    //     print_map(map2, "map2");
-    //     std::cout << "=======================================" << std::endl;
-    //     // map2.clear();
+        std::cout << "\nassign operator=()" << std::endl;
+        std::cout << "=======================================" << std::endl;
+        ft::map<int, int> map1;
+        map1.insert(ft::make_pair(5, 1));
+        map1.insert(ft::make_pair(2, 2));
+        map1.insert(ft::make_pair(10, 3));
+        map1.insert(ft::make_pair(4, 4));
+        print_map(map1, "map1");
+        ft::map<int, int> map2;
+        std::cout << "before assigning map1 to map2" << std::endl;
+        print_map(map2, "map2");
+        map2 = map1;
+        // std::cout << "after assigning map1 to map2" << std::endl;
+        // print_map(map2, "map2");
+        // std::cout << "=======================================" << std::endl;
+        // // map2.clear();
     // }
 
     // // // clear()
@@ -191,35 +191,35 @@ int main()
 
     // // erase()
     {
-        std::cout << "\nerase()" << std::endl;
-        std::cout << "=======================================" << std::endl;
-        ft::map<int, int> map1;
-        map1.insert(ft::make_pair(0, 1));
-        map1.insert(ft::make_pair(2, 2));
-        map1.insert(ft::make_pair(10, 3));
-        map1.insert(ft::make_pair(4, 4));
-        map1.insert(ft::make_pair(3, 300));
-        map1.insert(ft::make_pair(3, 300));
-        map1.insert(ft::make_pair(1, 110));
-        map1.insert(ft::make_pair(0, 10));
-        print_map(map1, "map1");
-        std::cout << "map1.erase(0): " << map1.erase(0) << std::endl;
-        ft::map<int, int>::iterator it = map1.begin();
-        std::advance(it, 2);
-        map1.erase(map1.begin(), it);
-        print_map(map1, "map1");
-        map1.erase(map1.begin());
-        print_map(map1, "map1");
-        std::cout << "=======================================" << std::endl;
+        // std::cout << "\nerase()" << std::endl;
+        // std::cout << "=======================================" << std::endl;
+        // ft::map<int, int> map1;
+        // map1.insert(ft::make_pair(0, 1));
+        // map1.insert(ft::make_pair(2, 2));
+        // map1.insert(ft::make_pair(10, 3));
+        // map1.insert(ft::make_pair(4, 4));
+        // map1.insert(ft::make_pair(3, 300));
+        // map1.insert(ft::make_pair(3, 300));
+        // map1.insert(ft::make_pair(1, 110));
+        // map1.insert(ft::make_pair(0, 10));
+        // print_map(map1, "map1");
+        // std::cout << "map1.erase(0): " << map1.erase(0) << std::endl;
+        // ft::map<int, int>::iterator it = map1.begin();
+        // std::advance(it, 2);
+        // map1.erase(map1.begin(), it);
+        // print_map(map1, "map1");
+        // map1.erase(map1.begin());
+        // print_map(map1, "map1");
+        // std::cout << "=======================================" << std::endl;
     }
 
     // // // max_size()
     {
-        std::cout << "\nmax_size()" << std::endl;
-        std::cout << "=======================================" << std::endl;
-        ft::map<int, int> map1;
-        std::cout << "map1.max_size(): " << map1.max_size() << std::endl;
-        std::cout << "=======================================" << std::endl;
+        // std::cout << "\nmax_size()" << std::endl;
+        // std::cout << "=======================================" << std::endl;
+        // ft::map<int, int> map1;
+        // std::cout << "map1.max_size(): " << map1.max_size() << std::endl;
+        // std::cout << "=======================================" << std::endl;
     }
 
     // // // swap()

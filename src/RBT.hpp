@@ -166,7 +166,7 @@ namespace ft
 
     template <class T,                         // map::mapped_type
               class Compare,                   // map::key_compare
-              class Alloc = std::allocator<T>> // map::allocator_type
+              class Alloc = std::allocator<T> > // map::allocator_type
     class RBT
     {
 
@@ -911,6 +911,18 @@ namespace ft
         {
             return reverse_iterator(_end_());
         }
+
+        //operator=
+        // RBT &operator=(RBT other)
+        // {
+        //     // this->root = other.root;
+        //     // this->size = other.size;
+        //     // this->comp = other.comp;
+        //     // this->alloc = other.alloc;
+        //     // this->end = other.end;
+        //     // this->nil = other.nil;
+        //     return *this;
+        // }
     };
 }
 #endif // RBT_HPP∂
