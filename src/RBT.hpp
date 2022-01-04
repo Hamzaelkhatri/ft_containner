@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <utility>
+#include <algorithm>
 #include "iterators.hpp"
 #include "iter_bool.hpp"
 #include <limits>
@@ -175,7 +175,6 @@ namespace ft
         typedef typename Alloc::reference node_reference;
         typedef typename Alloc::const_reference const_node_reference;
         typedef typename Alloc::size_type size_type;
-        typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
         typedef struct Node<value_type> *NodePtr;
         typedef RBT *self;
         int size;
@@ -183,6 +182,7 @@ namespace ft
         typedef ft::RBT_iter<self, Node_, pointer> const_iterator;
         typedef ft::reverse_iterator<iterator> reverse_iterator;
         typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+        typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
         //difference_type
         Node_ *root;
         Node_ *end;
@@ -690,18 +690,15 @@ namespace ft
         ~RBT()
         {
 
-            if (nil->height != -100)
+            if (nil->right != end)
             {
                 makeEmpty();
-                nil->height = -100;
                 alloc.destroy(nil);
                 alloc.deallocate(nil, 1);
-            }
-            if(end->height != -100)
-            {
+                nil->right = end;
                 alloc.destroy(end);
                 alloc.deallocate(end, 1);
-                end->height = -100;
+                end->right = end;
             }
         }
 
@@ -852,6 +849,8 @@ namespace ft
         {
             std::swap(root, other.root);
             std::swap(size, other.size);
+            std::swap(nil, other.nil);
+            std::swap(end, other.end);
             std::swap(comp, other.comp);
             std::swap(alloc, other.alloc);
         }
@@ -898,9 +897,9 @@ namespace ft
         }
         
         // max_size
-        deference_type max_size() const
+        size_type max_size() const
         {
-            return deference_type(2);
+            return (std::min(alloc.max_size(), std::numeric_limits<size_type>::max()));
         }
 
         reverse_iterator rend()

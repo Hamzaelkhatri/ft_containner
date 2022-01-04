@@ -5,37 +5,40 @@ begin() & end()
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-set1.begin(): 2
+map1.begin(): 2
 =======================================
 
 assign operator=()
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-before assigning set1 to set2
-after assigning set1 to set2
+before assigning map1 to map2
+
+map Size: 0
+map [map2] contains: nothing
+after assigning map1 to map2
 
 map Size: 4
-map [set2] contains: 
+map [map2] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
 =======================================
 
@@ -43,58 +46,64 @@ clear()
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-after clearing set1
+after clearing map1
+
+map Size: 0
+map [map1] contains: nothing
 =======================================
 
 count()
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-set1.count(5): 1
-set1.count(6): 0
+map1.count(5): 1
+map1.count(6): 0
 =======================================
 
 empty()
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-set1.empty(): 0
-after clearing set1
-set1.empty(): 1
+map1.empty(): 0
+after clearing map1
+
+map Size: 0
+map [map1] contains: nothing
+map1.empty(): 0
 =======================================
 
 find()
 =======================================
 
 map Size: 3
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [5] = 5
-here [10] = 10
+[2] = 2
+[5] = 1
+[10] = 3
 
-5 has been found and its second is = 5
+5 has been found and its second is = 1
 6 has not been found
 =======================================
 
@@ -102,46 +111,55 @@ insert()
 =======================================
 
 map Size: 3
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [5] = 5
-here [10] = 10
+[2] = 2
+[5] = 1
+[10] = 3
 
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
 inserted 4, 4 at 4
+
+map Size: 4
+map [map2] contains: 
+
+[0] = 20
+[2] = 30
+[3] = 40
+[4] = 50
+
 =======================================
 
 map constructors
 =======================================
 
 map Size: 2
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [5] = 5
+[2] = 2
+[5] = 1
 
 
 map Size: 2
-map [set2] contains: 
+map [map2] contains: 
 
-here [2] = 2
-here [5] = 5
+[2] = 2
+[5] = 1
 
 
 map Size: 2
 map [map3] contains: 
 
-here [2] = 2
-here [5] = 5
+[2] = 2
+[5] = 1
 
 =======================================
 
@@ -149,77 +167,78 @@ erase()
 =======================================
 
 map Size: 6
-map [set1] contains: 
+map [map1] contains: 
 
-here [0] = 0
-here [1] = 1
-here [2] = 2
-here [3] = 3
-here [4] = 4
-here [10] = 10
+[0] = 1
+[1] = 110
+[2] = 2
+[3] = 300
+[4] = 4
+[10] = 3
 
-set1.erase(0): 1
+map1.erase(0): 0
+erase
+erase
 
-map Size: 3
-map [set1] contains: 
+map Size: 6
+map [map1] contains: 
 
-here [3] = 3
-here [4] = 4
-here [10] = 10
+[3] = 300
+[4] = 4
+[10] = 3
 
+erase
 
-map Size: 2
-map [set1] contains: 
+map Size: 6
+map [map1] contains: 
 
-here [4] = 4
-here [10] = 10
+[4] = 4
+[10] = 3
 
 =======================================
 
 max_size()
 =======================================
-set1.max_size(): 4611686018427387903
-================std=======================
-set1.max_size(): 576460752303423487
+map1.max_size(): 461168601842738790
 =======================================
 
 swap()
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
-
-
-map Size: 4
-map [set2] contains: 
-
-here [0] = 0
-here [2] = 2
-here [4] = 4
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
 
 map Size: 4
-map [set1] contains: 
+map [map2] contains: 
 
-here [0] = 0
-here [2] = 2
-here [4] = 4
-here [10] = 10
+[0] = 1
+[2] = 2
+[4] = 4
+[10] = 3
 
 
 map Size: 4
-map [set2] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[0] = 1
+[2] = 2
+[4] = 4
+[10] = 3
+
+
+map Size: 4
+map [map2] contains: 
+
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
 =======================================
 
@@ -227,83 +246,90 @@ lower_bound()
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-set1.lower_bound(3): 4
-set1.lower_bound(5): 5
-set1.lower_bound(6): 10
+map1.lower_bound(3): 4
+map1.lower_bound(5): 5
+map1.lower_bound(6): 10
 =======================================
 
 upper_bound()
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-set1.upper_bound(3): 4
-set1.upper_bound(5): 10
-set1.upper_bound(6): 10
+map1.upper_bound(3): 4
+map1.upper_bound(5): 10
+map1.upper_bound(6): 10
 =======================================
 
 equal_range()
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-set1.equal_range(3): 4 4
-set1.equal_range(5): 5 10
-set1.equal_range(6): 10 10
+map1.equal_range(3): 4 4
+map1.equal_range(5): 5 10
+map1.equal_range(6): 10 10
 =======================================
 
 get_allocator()
 =======================================
-alloc max size: 4611686018427387903
+
+map Size: 0
+map [map1] contains: nothing
+alloc max size: 2305843009213693951
 =======================================
 
 const iterators
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-set1.begin(): 2
-set1.end(): 10
+map1.begin(): 2
+map1.end(): 10
 =======================================
 
 reverse iterators
 =======================================
 
 map Size: 4
-map [set1] contains: 
+map [map1] contains: 
 
-here [2] = 2
-here [4] = 4
-here [5] = 5
-here [10] = 10
+[2] = 2
+[4] = 4
+[5] = 1
+[10] = 3
 
-[10] = 10
-[5] = 5
+[10] = 3
+[5] = 1
 [4] = 4
 [2] = 2
 =======================================
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of map tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+end of program

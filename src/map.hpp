@@ -69,7 +69,7 @@ namespace ft
         }
         map(const map &other)
         {
-            // _tree.~RBT();
+            _tree.~RBT();
             _comp = other._comp;
             _alloc_ = other._alloc_;
             _tree = other._tree;
@@ -162,15 +162,14 @@ namespace ft
         }
 
         // swap
-        void swap(const map &other)
+        void swap(map &other)
         {
             if (this == &other)
                 return;
-            _tree.~RBT();
-            this->_comp = other._comp;
-            this->_alloc_ = other._alloc_;
-            this->_tree = other._tree;
-            // }
+            _tree.swap(other._tree);
+            std::swap(_comp, other._comp);
+            std::swap(_alloc_, other._alloc_);
+
         }
 
         // clear
