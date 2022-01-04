@@ -29,7 +29,6 @@ namespace ft
         typedef typename tree::const_iterator const_iterator;
         typedef typename tree::reverse_iterator reverse_iterator;
         typedef typename tree::const_reverse_iterator const_reverse_iterator;
-        typedef typename tree::difference_type difference_type;
         typedef typename tree::node_allocator allocator_types;
         typedef typename Alloc::size_type size_type;
         typedef typename tree::NodePtr NodePtr;
@@ -159,10 +158,9 @@ namespace ft
             if (this != &x)
             {
                 _tree.swap(x._tree);
-                // ft::swap(_tree, x._tree);
-                ft::swap(_alloc_, x._alloc_);
-                ft::swap(_comp, x._comp);
-                ft::swap(_size, x._size);
+                std::swap(_alloc_, x._alloc_);
+                std::swap(_comp, x._comp);
+                std::swap(_size, x._size);
             }
         }
 

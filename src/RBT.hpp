@@ -653,6 +653,7 @@ namespace ft
             }
             if (root != nil && root)
                 root->color = BLACK;
+            size--;
         }
 
         // size
